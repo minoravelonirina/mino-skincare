@@ -12,7 +12,11 @@
     "db:push": "prisma db push",
     "db:reset": "prisma migrate reset",
     "db:seed": "tsx prisma/seed.ts",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "openapi:generate:client": "npx @openapitools/openapi-generator-cli generate -g typescript-fetch -i docs/openapi.yaml -o client --additional-properties=typescriptThreePlus=true,supportsES6=true",
+    "openapi:generate:server": "npx @openapitools/openapi-generator-cli generate -g nodejs-express-server -i docs/openapi.yaml -o server --additional-properties=usePromises=true,typescriptThreePlus=true",
+    "openapi:generate": "pnpm openapi:generate:client",
+    "regenerate": "powershell -ExecutionPolicy Bypass -File ./regenerate.ps1"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.6.0",
@@ -34,6 +38,7 @@
     "prisma": "^7.6.0",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
-    "typescript": "^5"
+    "typescript": "^5",
+    "@openapitools/openapi-generator-cli": "^2.5.0"
   }
 }

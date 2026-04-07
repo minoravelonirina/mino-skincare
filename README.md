@@ -9,7 +9,7 @@ Ce projet est conçu comme une application fonctionnelle pour :
 - présenter une entreprise de cosmétique (page « vitrine »)
 - montrer l'identité de la marque, les produits et les engagements
 - proposer un espace d'achat en ligne pour des produits de beauté
-- servir de support pratique à un portfolio ou à une présentation à un futur recruteur
+
 
 ## Ce que le site montre
 
@@ -29,12 +29,6 @@ Ce projet utilise les technologies suivantes :
 - **PostgreSQL** : base de données pour stocker les produits et les commandes
 - **Docker** : facilité de mise en place de l'environnement de développement
 
-## Pour qui c'est utile
-
-Ce README est pensé pour des non-codeurs et des recruteurs. Il explique le projet sans entrer dans des détails techniques trop avancés.
-
-- Pour un recruteur : c'est un projet de démonstration de développement web moderne.
-- Pour un futur employeur : il montre des compétences en conception de site, intégration de catalogue produit et gestion d'une application full-stack.
 
 ## Lancer le projet
 
@@ -66,13 +60,4 @@ Voici les fonctionnalités principales que le site propose ou pourrait inclure :
 - **Intégration de paiement** : système sécurisé pour les achats (à implémenter)
 
 Ces fonctionnalités montrent une application complète, prête pour une utilisation réelle.
-
-## À noter
-
-Le nom du projet est **Mino Skincare**, une marque fictive de cosmétique. Le site est fait pour servir de base et peut être enrichi avec :
-
-- plus de produits
-- une page d'informations détaillées
-- un système de connexion client
-- des fonctionnalités de paiement
 

@@ -1,45 +1,52 @@
 # syntax=docker/dockerfile:1
 
-# Comments are provided throughout this file to help you get started.
-# If you need more help, visit the Dockerfile reference guide at
-# https://docs.docker.com/go/dockerfile-reference/
-
-# Want to help us make this template better? Share your feedback here: https://forms.gle/ybq9Krt8jtBL3iCk7
-
-ARG NODE_VERSION=24.12.0-alpine
+ARG NODE_IMAGE_VERSION=24.12.0-alpine
 ARG PNPM_VERSION=10.33.0
 
-FROM node:${NODE_VERSION}
+# ─── Stage 1 : Builder ───────────────────────────────────────────────────────
+FROM node:${NODE_IMAGE_VERSION} AS builder
 
-# Use development node environment by default (for pnpm dev).
-ENV NODE_ENV development
+ENV NODE_ENV=development
 
-# Install pnpm.
 RUN --mount=type=cache,target=/root/.npm \
     npm install -g pnpm@${PNPM_VERSION}
 
 WORKDIR /usr/src/app
-COPY package.json pnpm-lock.yaml ./
 
-# Download dependencies as a separate step to take advantage of Docker's caching.
-# Leverage a cache mount to /root/.local/share/pnpm/store to speed up subsequent builds.
+COPY package.json pnpm-lock.yaml ./
 RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
     pnpm install --frozen-lockfile
 
-# Copy the rest of the source files into the image.
+COPY prisma ./prisma
+RUN pnpm db:generate
+
 COPY . .
 
-# Generate Prisma client.
-RUN pnpm dlx prisma generate
+# ─── Stage 2 : Runner ────────────────────────────────────────────────────────
+FROM node:${NODE_IMAGE_VERSION} AS runner
 
-# Fix ownership before dropping privileges.
+ARG NODE_ENV=development
+ENV NODE_ENV=${NODE_ENV}
+
+RUN --mount=type=cache,target=/root/.npm \
+    npm install -g pnpm@${PNPM_VERSION}
+
+WORKDIR /usr/src/app
+
+# Copier tout depuis le builder (structure classique Next.js)
+COPY --from=builder /usr/src/app/package.json ./
+COPY --from=builder /usr/src/app/pnpm-lock.yaml ./
+COPY --from=builder /usr/src/app/node_modules ./node_modules
+COPY --from=builder /usr/src/app/prisma ./prisma
+COPY --from=builder /usr/src/app/app ./app
+COPY --from=builder /usr/src/app/public ./public
+COPY --from=builder /usr/src/app/next.config.* ./
+COPY --from=builder /usr/src/app/tsconfig.json ./
+
 RUN chown -R node:node /usr/src/app
 
-# Run the application as a non-root user.
 USER node
 
-# Expose the port that the application listens on.
 EXPOSE 3000
 
-# Run the application.
 CMD ["pnpm", "dev"]

@@ -79,10 +79,10 @@ Write-Host "      OK : Server généré dans /$SERVER_DIR" -ForegroundColor Gree
 # 5. Régénération du client Prisma
 Write-Host ""
 Write-Host "[5/5] Régénération du client Prisma..." -ForegroundColor Yellow
-npx prisma generate
+pnpm db:generate
 
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "ERREUR : prisma generate a échoué." -ForegroundColor Red
+    Write-Host "ERREUR : prisma db:generate a échoué." -ForegroundColor Red
     exit 1
 }
 Write-Host "      OK : Client Prisma régénéré." -ForegroundColor Green

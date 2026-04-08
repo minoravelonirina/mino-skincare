@@ -3,15 +3,25 @@ services:
   app:
     build:
       context: .
+      args:
+        NODE_ENV: development
+      cache_from:
+        - app:latest  # réutilise le cache du dernier build
+    image: app:latest  # tag l'image pour que cache_from fonctionne
     ports:
       - "3000:3000"
     environment:
       NODE_ENV: development
     env_file:
-      - .env
+      - .env.docker
+    volumes:
+      - .:/usr/src/app                     # hot-reload du code
+      - /usr/src/app/node_modules          # isole node_modules du host
+      - /usr/src/app/.next                 # isole le build Next.js
     depends_on:
       db:
         condition: service_healthy
+    restart: unless-stopped
 
   db:
     image: postgres:16-alpine

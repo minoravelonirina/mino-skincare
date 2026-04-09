@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server'
 import prisma from '@/lib/prisma'
+import bcrypt from 'bcryptjs'
 import { successResponse, errorResponse } from '@/app/api/utils/responses'
 import { validateEmail, validatePassword } from '@/app/api/utils/validation'
 
@@ -25,7 +26,8 @@ export async function POST(request: NextRequest) {
 
     // NOTE: En production, utiliser bcrypt pour la comparaison
     // Pour la démo, on compare directement
-    if (user.password !== body.password) {
+    const isMatch = await bcrypt.compare(body.password, user.password)
+    if (!isMatch) {
       return errorResponse('Email ou mot de passe invalide', 401)
     }
 

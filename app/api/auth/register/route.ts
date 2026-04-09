@@ -1,11 +1,15 @@
 import { NextRequest } from 'next/server'
 import prisma from '@/lib/prisma'
+import bcrypt from 'bcryptjs'
 import { successResponse, errorResponse } from '@/app/api/utils/responses'
 import { validateEmail, validatePassword } from '@/app/api/utils/validation'
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
+
+    const salt= await bcrypt.genSalt(12);
+    const hashedPassword = await bcrypt.hash(body.password, salt);
 
     if (!body.email || !body.password) {
       return errorResponse('email et password sont requis', 400)
@@ -31,7 +35,7 @@ export async function POST(request: NextRequest) {
     const user = await prisma.user.create({
       data: {
         email: body.email,
-        password: body.password, // NOTE: À hasher correctement en production
+        password: hashedPassword, // NOTE: À hasher correctement en production
         firstName: body.firstName || null,
         lastName: body.lastName || null,
         phone: body.phone || null,

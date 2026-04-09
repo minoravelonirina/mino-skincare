@@ -9,6 +9,8 @@ paths:
   /auth/login:
     post:
       summary: Connexion utilisateur
+      tags: 
+        - auth
       requestBody:
         required: true
         content:
@@ -25,6 +27,8 @@ paths:
   /auth/register:
     post:
       summary: Inscription utilisateur
+      tags: 
+        - auth
       requestBody:
         required: true
         content:
@@ -42,6 +46,8 @@ paths:
     get:
       summary: Liste des produits
       description: Récupère la liste des produits avec filtres et pagination.
+      tags: 
+        - products
       parameters:
         - name: categoryId
           in: query
@@ -113,6 +119,8 @@ paths:
                 $ref: '#/components/schemas/ProductPage'
     post:
       summary: Créer un produit
+      tags:
+        - products
       requestBody:
         required: true
         content:
@@ -129,6 +137,8 @@ paths:
   /products/{productId}:
     get:
       summary: Détails d'un produit
+      tags:
+        - products
       parameters:
         - name: productId
           in: path
@@ -146,6 +156,8 @@ paths:
           description: Produit non trouvé
     patch:
       summary: Mettre à jour un produit
+      tags:
+        - products
       parameters:
         - name: productId
           in: path
@@ -167,6 +179,8 @@ paths:
                 $ref: '#/components/schemas/Product'
     delete:
       summary: Supprimer un produit
+      tags:
+        - products
       parameters:
         - name: productId
           in: path
@@ -176,9 +190,54 @@ paths:
       responses:
         '204':
           description: Produit supprimé
+  /products/{productId}/reviews:
+    get:
+      summary: Avis d'un produit
+      tags:
+        - products-reviews
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Avis du produit
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Review'
+    post:
+      summary: Ajouter un avis produit
+      tags:
+        - products-reviews
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewCreate'
+      responses:
+        '201':
+          description: Avis créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
   /categories:
     get:
       summary: Liste des catégories
+      tags:
+        - categories
       responses:
         '200':
           description: Liste des catégories
@@ -191,6 +250,8 @@ paths:
   /categories/{categoryId}:
     get:
       summary: Détails d'une catégorie
+      tags:
+        - categories
       parameters:
         - name: categoryId
           in: path
@@ -207,6 +268,8 @@ paths:
   /brands:
     get:
       summary: Liste des marques
+      tags:
+        - categories
       responses:
         '200':
           description: Liste des marques
@@ -219,6 +282,8 @@ paths:
   /users:
     get:
       summary: Liste des utilisateurs
+      tags:
+        - users
       responses:
         '200':
           description: Liste des utilisateurs
@@ -231,6 +296,8 @@ paths:
   /users/{userId}:
     get:
       summary: Détails d'un utilisateur
+      tags:
+        - users
       parameters:
         - name: userId
           in: path
@@ -246,6 +313,8 @@ paths:
                 $ref: '#/components/schemas/User'
     patch:
       summary: Mettre à jour un utilisateur
+      tags:
+        - users
       parameters:
         - name: userId
           in: path
@@ -268,6 +337,8 @@ paths:
   /users/{userId}/addresses:
     get:
       summary: Liste des adresses d'un utilisateur
+      tags:
+        - users
       parameters:
         - name: userId
           in: path
@@ -285,6 +356,8 @@ paths:
                   $ref: '#/components/schemas/Address'
     post:
       summary: Ajouter une adresse
+      tags:
+        - users
       parameters:
         - name: userId
           in: path
@@ -307,6 +380,8 @@ paths:
   /users/{userId}/addresses/{addressId}:
     patch:
       summary: Mettre à jour une adresse
+      tags:
+        - users
       parameters:
         - name: userId
           in: path
@@ -333,6 +408,8 @@ paths:
                 $ref: '#/components/schemas/Address'
     delete:
       summary: Supprimer une adresse
+      tags:
+        - users
       parameters:
         - name: userId
           in: path
@@ -350,6 +427,8 @@ paths:
   /cart-items:
     get:
       summary: Liste des articles du panier
+      tags:
+        - cart-items
       parameters:
         - name: userId
           in: query
@@ -367,6 +446,8 @@ paths:
                   $ref: '#/components/schemas/CartItem'
     post:
       summary: Ajouter un article au panier
+      tags:
+        - cart-items
       requestBody:
         required: true
         content:
@@ -383,6 +464,8 @@ paths:
   /cart-items/{cartItemId}:
     patch:
       summary: Mettre à jour la quantité d'un panier
+      tags:
+        - cart-items
       parameters:
         - name: cartItemId
           in: path
@@ -404,6 +487,8 @@ paths:
                 $ref: '#/components/schemas/CartItem'
     delete:
       summary: Supprimer un article du panier
+      tags:
+        - cart-items
       parameters:
         - name: cartItemId
           in: path
@@ -416,6 +501,8 @@ paths:
   /orders:
     get:
       summary: Liste des commandes
+      tags:
+        - orders
       parameters:
         - name: userId
           in: query
@@ -433,6 +520,8 @@ paths:
                   $ref: '#/components/schemas/Order'
     post:
       summary: Créer une commande
+      tags:
+        - orders
       requestBody:
         required: true
         content:
@@ -449,6 +538,8 @@ paths:
   /orders/{orderId}:
     get:
       summary: Détails d'une commande
+      tags:
+        - orders
       parameters:
         - name: orderId
           in: path
@@ -466,6 +557,8 @@ paths:
           description: Commande non trouvée
     patch:
       summary: Mettre à jour le statut d'une commande
+      tags:
+        - orders
       parameters:
         - name: orderId
           in: path
@@ -488,11 +581,18 @@ paths:
   /orders/{orderId}/payments:
     get:
       summary: Paiements d'une commande
+      tags:
+        - orders-payments
       parameters:
         - name: orderId
           in: path
           required: true
           schema:
+            type: integer
+        - name: paymentId
+          in: path
+          required: true
+          schema: 
             type: integer
       responses:
         '200':
@@ -505,11 +605,18 @@ paths:
                   $ref: '#/components/schemas/Payment'
     post:
       summary: Ajouter un paiement à une commande
+      tags:
+        - orders-payments
       parameters:
         - name: orderId
           in: path
           required: true
           schema:
+            type: integer
+        - name: paymentId
+          in: path
+          required: true
+          schema: 
             type: integer
       requestBody:
         required: true
@@ -524,14 +631,90 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Payment'
-  /orders/{orderId}/shipments:
+  /orders/{orderId}/payments/{paymentId}:
     get:
-      summary: Livraisons d'une commande
+      summary: Paiements d'une commande
+      tags:
+        - orders-payments
       parameters:
         - name: orderId
           in: path
           required: true
           schema:
+            type: integer
+        - name: paymentId
+          in: path
+          required: true
+          schema: 
+            type: integer
+      responses:
+        '200':
+          description: Liste des paiements
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+    patch:
+      summary: Mettre à jour le paiement d'une commande
+      tags:
+        - orders-payments
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: paymentId
+          in: path
+          required: true
+          schema: 
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentStatusUpdate'
+      responses:
+        '200':
+          description: Status du paiement mis à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentStatusUpdate'
+    delete:
+      summary: Supprimer un paiement
+      tags:
+        - orders-payments 
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: paymentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Paiement supprimée
+  /orders/{orderId}/shipments:
+    get:
+      summary: Livraisons d'une commande
+      tags:
+        - orders-shipments
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: shipmentId
+          in: path
+          required: true
+          schema: 
             type: integer
       responses:
         '200':
@@ -542,28 +725,17 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Shipment'
-  /products/{productId}/reviews:
-    get:
-      summary: Avis d'un produit
+    post:
+      summary: Nouvelle livraison
+      tags:
+        - orders-shipments
       parameters:
-        - name: productId
+        - name: orderId
           in: path
           required: true
           schema:
             type: integer
-      responses:
-        '200':
-          description: Avis du produit
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Review'
-    post:
-      summary: Ajouter un avis produit
-      parameters:
-        - name: productId
+        - name: shipmentId
           in: path
           required: true
           schema:
@@ -573,14 +745,81 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ReviewCreate'
+              $ref: '#/components/schemas/ShipmentCreate'
       responses:
         '201':
-          description: Avis créé
+          description: Ajout d'une livraison avec succes
+  /orders/{orderId}/shipments/{shipmentId}:
+    get:
+      summary: Livraisons d'une commande
+      tags:
+        - orders-shipments
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: shipmentId
+          in: path
+          required: true
+          schema: 
+            type: integer
+      responses:
+        '200':
+          description: Afficher les details d'une livraison
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Review'
+                $ref: '#/components/schemas/Shipment'
+    patch:
+      summary: Mettre a jour le status d'une livraison
+      tags:
+        - orders-shipments
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: shipmentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody: 
+        required: true
+        content:
+          application/json:
+            schema:
+              type: 
+              $ref: '#/components/schemas/ShipmentStatusUpdate'
+      responses: 
+        '200':
+          description: Status de la livraison mis a jour
+          content:
+            application/json:
+              schema:
+                type:
+                $ref: '#/components/schemas/ShipmentStatusUpdate'
+    delete:
+      summary: Supprimer une livraison
+      tags:
+        - orders-shipments
+      parameters:
+        - name: ordersId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: shipmentId
+          in: path
+          required: true
+          schema: 
+            type: integer
+      responses:
+        '204':
+          description: Livraison supprime
 components:
   schemas:
     Product:
@@ -1043,6 +1282,20 @@ components:
       properties:
         status:
           type: string
+    PaymentStatusUpdate:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+    ShipmentStatusUpdate:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
     ProductPage:
       type: object
       properties:
@@ -1103,6 +1356,30 @@ components:
           format: date-time
         notes:
           type: string
+    ShipmentCreate:
+      type: object
+      required:
+        - carrier
+        - trackingNumber
+      properties:
+        trackingNumber:
+          type: string
+          nullable: true
+        carrier:
+          type: string
+          nullable: true
+        shippedAt:
+          type: string
+          format: date-time
+          nullable: true
+        deliveredAt:
+          type: string
+          format: date-time
+          nullable: true
+        estimatedDelivery:
+          type: string
+          format: date-time
+          nullable: true
     Shipment:
       type: object
       properties:

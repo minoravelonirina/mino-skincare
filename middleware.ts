@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-export function middleware(request: NextRequest) {
+export default function middleware(request: NextRequest) {
   const isAuthenticated = false; // Logique d'auth ici
   
   if (!isAuthenticated && request.nextUrl.pathname.startsWith('/products')) {

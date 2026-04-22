@@ -55,6 +55,13 @@ export const notFoundResponse = (resource: string): NextResponse<ApiResponse<nul
   )
 }
 
+export const internalServerResponse = (resource: string): NextResponse<ApiResponse<null>> => {
+  return errorResponse(
+    new ApiError(500, `${resource}`, 'INTERNAL_SERVER'),
+    500
+  )
+}
+
 export const unauthorizedResponse = (): NextResponse<ApiResponse<null>> => {
   return errorResponse(
     new ApiError(401, 'Non authentifié', 'UNAUTHORIZED'),

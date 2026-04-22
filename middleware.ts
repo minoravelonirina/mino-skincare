@@ -1,13 +1,38 @@
 // middleware.ts
 import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import { NextRequest } from 'next/server'
+import { isPromise } from 'util/types';
+import { verifyAccessToken } from './lib/auth';
 
-export default function middleware(request: NextRequest) {
-  const isAuthenticated = false; // Logique d'auth ici
-  
-  if (!isAuthenticated && request.nextUrl.pathname.startsWith('/products')) {
-    // Redirige vers la page de connexion
-    return NextResponse.redirect(new URL('/login', request.url))
+export default async function middleware(request: NextRequest) {
+  const token = request.cookies.get('accessToken')?.value;
+
+  // Protected routes:
+  const protectedPaths = ["/dashboard", "/profile", "/settings"];
+  const isProtectedPath = protectedPaths.some(path => request.nextUrl.pathname.startsWith(path));
+
+  // Public routes that should redirect if authentificated:
+  const authPaths = ["/login", "/register"];
+  const isAuthPath = authPaths.some(path => request.nextUrl.pathname.startsWith(path));
+
+  if (isProtectedPath){
+    if (!token)
+      return NextResponse.redirect(new URL('/login', request.url));
+  }
+
+  const user = await verifyAccessToken(token || '');
+  if (!user){
+    const response = NextResponse.redirect(new URL('/login', request.url));
+    response.cookies.delete('accessToken');
+    response.cookies.delete('refreshToken');
+    return response;
+  }
+
+  if (!isAuthPath && token) {
+    const user = await verifyAccessToken(token);
+    if (user)
+      // ou aussi /product
+      return NextResponse.redirect(new URL('/dashboard', request.url))
   }
   
   // Laisse la requête passer
@@ -16,5 +41,11 @@ export default function middleware(request: NextRequest) {
 
 // Configuration pour spécifier sur quelles routes appliquer le middleware
 export const config = {
-  matcher: '/products/:path*',
+  matcher: [
+    '/products/:path*',
+    '/profile/:path*',
+    '/settings/:path*',
+    '/login',
+    '/register'
+  ]
 }

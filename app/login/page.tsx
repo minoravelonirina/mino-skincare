@@ -1,8 +1,10 @@
+'use client';
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
-export default async function LoginPage() {
+export default function LoginPage() {
     const router = useRouter();
     const [formData, setFormData] = useState({
         email: "",
@@ -12,7 +14,7 @@ export default async function LoginPage() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const handleSubmit = async (e: HTMLFormElement) => {
+    const handleSubmit = async (e: React.SyntheticEvent) => {
         e.preventDefault();
         setError('');
         setLoading(true)
@@ -45,7 +47,7 @@ export default async function LoginPage() {
                     Sign in to your account
                 </h2>
             </div>
-            <form className="mt-8 space-y-6" onSubmit={() => handleSubmit}>
+            <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                 {error && (
                     <div className="rounded-md bg-red-50 p-4">
                         <p className="text-sm text-red-800">{error}</p>

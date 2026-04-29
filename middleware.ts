@@ -1,7 +1,6 @@
 // middleware.ts
 import { NextResponse } from 'next/server'
 import { NextRequest } from 'next/server'
-import { isPromise } from 'util/types';
 import { verifyAccessToken } from './lib/auth';
 
 export default async function middleware(request: NextRequest) {
@@ -20,13 +19,16 @@ export default async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  const user = await verifyAccessToken(token || '');
-  if (!user){
-    const response = NextResponse.redirect(new URL('/login', request.url));
-    response.cookies.delete('accessToken');
-    response.cookies.delete('refreshToken');
-    return response;
+  if (isProtectedPath){
+    const user = await verifyAccessToken(token || "");
+    if (!user){
+      const response = NextResponse.redirect(new URL('/login', request.url));
+      response.cookies.delete('accessToken');
+      response.cookies.delete('refreshToken');
+      return response;
+    }
   }
+  
 
   if (!isAuthPath && token) {
     const user = await verifyAccessToken(token);
@@ -42,10 +44,9 @@ export default async function middleware(request: NextRequest) {
 // Configuration pour spécifier sur quelles routes appliquer le middleware
 export const config = {
   matcher: [
+    '/dashboard/:path*',
     '/products/:path*',
     '/profile/:path*',
-    '/settings/:path*',
-    '/login',
-    '/register'
+    '/settings/:path*'
   ]
 }

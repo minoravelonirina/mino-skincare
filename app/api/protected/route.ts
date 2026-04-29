@@ -1,14 +1,13 @@
 import { getCurrentUser } from "@/lib/auth";
-import { unauthorized } from "next/navigation";
 import { NextRequest } from "next/server";
-import { internalServerResponse, successResponse } from "../utils/responses";
+import { internalServerResponse, successResponse, unauthorizedResponse } from "../utils/responses";
 
 export async function GET (request: NextRequest){
     try {
         const user = await getCurrentUser(request);
 
         if (!user)
-            return unauthorized();
+            return unauthorizedResponse();
 
         return successResponse({
             message: 'Ceci est un donnee securise.',

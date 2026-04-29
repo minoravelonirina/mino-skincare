@@ -10,8 +10,8 @@ Write-Host ""
 
 # ---------- CONFIGURATION ----------
 $OPENAPI_FILE = "docs/openapi.yaml"   # Chemin vers ton fichier OpenAPI
-$CLIENT_DIR   = "client"              # Dossier client généré
-$SERVER_DIR   = "server"              # Dossier server généré
+$CLIENT_DIR   = "generated/client"              # Dossier client généré
+$SERVER_DIR   = "generated/server"              # Dossier server généré
 # -----------------------------------
 
 
@@ -51,7 +51,7 @@ npx @openapitools/openapi-generator-cli generate `
     -g typescript-fetch `
     -i $OPENAPI_FILE `
     -o $CLIENT_DIR `
-    --additional-properties=typescriptThreePlus=true,supportsES6=true
+    --additional-properties=typescriptThreePlus=true
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "ERREUR : La génération du client a échoué." -ForegroundColor Red
@@ -67,7 +67,7 @@ npx @openapitools/openapi-generator-cli generate `
     -g nodejs-express-server `
     -i $OPENAPI_FILE `
     -o $SERVER_DIR `
-    --additional-properties=usePromises=true,typescriptThreePlus=true
+    --additional-properties=usePromises=true
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "ERREUR : La génération du server a échoué." -ForegroundColor Red

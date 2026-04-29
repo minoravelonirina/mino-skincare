@@ -711,11 +711,6 @@ paths:
           required: true
           schema:
             type: integer
-        - name: shipmentId
-          in: path
-          required: true
-          schema: 
-            type: integer
       responses:
         '200':
           description: Liste des livraisons
@@ -731,11 +726,6 @@ paths:
         - orders-shipments
       parameters:
         - name: orderId
-          in: path
-          required: true
-          schema:
-            type: integer
-        - name: shipmentId
           in: path
           required: true
           schema:
@@ -807,7 +797,7 @@ paths:
       tags:
         - orders-shipments
       parameters:
-        - name: ordersId
+        - name: orderId
           in: path
           required: true
           schema:

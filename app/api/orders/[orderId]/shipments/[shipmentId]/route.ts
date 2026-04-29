@@ -8,7 +8,7 @@ export async function GET(
   { params }: { params: Promise<{ orderId: string; shipmentId: string }> }
 ) {
   try {
-    const { shipmentId } = await params
+    const { shipmentId, orderId } = await params
     const id = parseInt(shipmentId)
 
     const shipment = await prisma.shipment.findUnique({
@@ -34,7 +34,7 @@ export async function PATCH(
   { params }: { params: Promise<{ orderId: string; shipmentId: string }> }
 ) {
   try {
-    const { shipmentId } = await params
+    const { shipmentId, orderId } = await params
     const id = parseInt(shipmentId)
     const body = await request.json()
 
@@ -77,7 +77,7 @@ export async function DELETE(
   { params }: { params: Promise<{ orderId: string; shipmentId: string }> }
 ) {
   try {
-    const { shipmentId } = await params
+    const { shipmentId, orderId } = await params
     const id = parseInt(shipmentId)
 
     const shipment = await prisma.shipment.findUnique({

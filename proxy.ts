@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 import { NextRequest } from 'next/server'
 import { verifyAccessToken } from './lib/auth';
 
-export default async function middleware(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   const token = request.cookies.get('accessToken')?.value;
 
   // Protected routes:
@@ -30,10 +30,9 @@ export default async function middleware(request: NextRequest) {
   }
   
 
-  if (!isAuthPath && token) {
+  if (isAuthPath && token) {
     const user = await verifyAccessToken(token);
     if (user)
-      // ou aussi /product
       return NextResponse.redirect(new URL('/dashboard', request.url))
   }
   

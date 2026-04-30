@@ -3,7 +3,7 @@ import prisma from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
 import { successResponse, errorResponse } from '@/app/api/utils/responses'
 import { validateEmail, validatePassword } from '@/app/api/utils/validation'
-import { generateAccessToken, generateRefreshToken, setAuthCookies } from '@/lib/auth'
+import { generateAccessToken, generateRefreshToken } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
@@ -36,8 +36,8 @@ export async function POST(request: NextRequest) {
       data: {
         email: body.email,
         password: hashedPassword,
-        firstName: body.firstName || null,
-        lastName: body.lastName || null,
+        firstName: body.firstname || null,
+        lastName: body.lastname || null,
         phone: body.phone || null,
         role: 'CUSTOMER',
       },
@@ -51,9 +51,7 @@ export async function POST(request: NextRequest) {
     const accessToken = await generateAccessToken(payload);
     const refreshToken = await generateRefreshToken(payload);
 
-    await setAuthCookies(accessToken, refreshToken);
-
-    return successResponse(
+    const response = successResponse(
       {
         accessToken,
         user: {
@@ -68,6 +66,25 @@ export async function POST(request: NextRequest) {
       },
       201
     )
+
+    // Définir les cookies sur la réponse
+    response.cookies.set('accessToken', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 15,
+      path: '/'
+    });
+
+    response.cookies.set('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 7,
+      path: '/'
+    });
+
+    return response;
   } catch (error) {
     return errorResponse(error as Error)
   }

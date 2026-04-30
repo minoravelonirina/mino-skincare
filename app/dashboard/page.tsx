@@ -23,11 +23,11 @@ export default function DashboardPage() {
   const fetchProtectedData = async () => {																	
     try {																	
       const response = await fetch('/api/protected');																	
-      const data = await response.json();																	
+      const result = await response.json();														
 																	
-      if (data.success) {																	
-        setUserData(data.user);																	
-        setProtectedData(data.data);																	
+      if (result.success) {																	
+        setUserData(result.data.user);																	
+        setProtectedData(result.data.data);																	
       }																	
     } catch (error) {																	
       console.error('Error fetching protected data:', error);																	

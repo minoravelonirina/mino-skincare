@@ -38,9 +38,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const priceFormatted = new Intl.NumberFormat('fr-FR', {
     style: 'currency',
     currency: 'EUR',
-  })
-    .format(product.price)
-    .replace('€', 'Ar')
+  }).format(product.price)
 
   return (
     <main className="bg-[#FAFAF7] text-[#1a1a1a] antialiased">
@@ -71,8 +69,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 {product.compareAtPrice && product.compareAtPrice > product.price && (
                   <p className="text-sm text-[#999] line-through">
                     {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' })
-                      .format(product.compareAtPrice)
-                      .replace('€', 'Ar')}
+                      .format(product.compareAtPrice)}
                   </p>
                 )}
               </div>

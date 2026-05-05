@@ -1,7 +1,91 @@
 import Link from 'next/link'
-import Footer from "../app/components/footer";
+import Image from 'next/image'
+import Footer from "./components/Footer";
+import prisma from "@/lib/prisma";
 
-export default function Home() {
+async function getCategories() {
+  const categories = await prisma.category.findMany({
+    include: {
+      _count: {
+        select: { products: { where: { isActive: true } } },
+      },
+    },
+    orderBy: { name: 'asc' },
+  });
+
+  return categories;
+}
+
+async function getFeaturedProducts() {
+  const products = await prisma.product.findMany({
+    where: {
+      isActive: true,
+      isFeatured: true,
+    },
+    include: {
+      brand: true,
+      category: true,
+    },
+    take: 4,
+    orderBy: { createdAt: 'desc' },
+  });
+
+  return products;
+}
+
+async function getOtherProducts() {
+  const products = await prisma.product.findMany({
+    where: {
+      isActive: true,
+      isFeatured: false,
+    },
+    include: {
+      brand: true,
+      category: true,
+    },
+    take: 2,
+    orderBy: { createdAt: 'desc' },
+  });
+
+  return products;
+}
+
+async function getReviews() {
+  const reviews = await prisma.review.findMany({
+    where: {
+      isVerified: true,
+    },
+    include: {
+      user: true,
+      product: true,
+    },
+    take: 3,
+    orderBy: { createdAt: 'desc' },
+  });
+
+  return reviews;
+}
+
+export default async function Home() {
+  const [categories, featuredProducts, otherProducts, reviews] = await Promise.all([
+    getCategories(),
+    getFeaturedProducts(),
+    getOtherProducts(),
+    getReviews(),
+  ]);
+
+  const getProductImage = (product: any) => {
+    if (product.images) {
+      try {
+        const images = JSON.parse(product.images);
+        return images[0] || '/placeholder-product.jpg';
+      } catch {
+        return '/placeholder-product.jpg';
+      }
+    }
+    return '/placeholder-product.jpg';
+  };
+
   return (
     <main className="bg-[#FAFAF7] text-[#1a1a1a] antialiased">
       <header className="sticky top-0 z-30 border-b border-[#e8e4dc] bg-white/95 backdrop-blur-sm">
@@ -49,11 +133,22 @@ export default function Home() {
 
           <div className="relative overflow-hidden rounded-[30px] bg-[#EEF3E8] p-10 shadow-[0_24px_60px_rgba(45,90,61,0.12)]">
             <div className="absolute -right-10 -top-10 h-56 w-56 rounded-full bg-[#c8deb4] opacity-60 blur-[1px]"></div>
-            <div className="relative flex h-full flex-col items-center justify-center gap-6">
-              <div className="text-[4rem]">🌿</div>
-              <div className="rounded-3xl bg-white/90 px-6 py-4 text-center shadow-sm">
-                <p className="text-xs uppercase tracking-[0.3em] text-[#2d5a3d]">100% naturel</p>
-                <p className="mt-2 text-sm font-medium text-[#1a1a1a]">Formules maison développées par Mino Skincare</p>
+            <div className="relative flex h-full items-center justify-center">
+              <div className="relative w-full h-full min-h-100 rounded-2xl overflow-hidden shadow-lg">
+                <Image
+                  src="/premium_photo-1682096423780-41ca1b04af68.avif"
+                  alt="Femme avec une peau soyeuse et rayonnante - Mino Skincare"
+                  fill
+                  className="object-cover object-center"
+                  priority
+                />
+                <div className="absolute inset-0 bg-linear-to-t from-black/30 via-transparent to-transparent"></div>
+                <div className="absolute bottom-6 left-6 right-6">
+                  <div className="rounded-3xl bg-white/95 backdrop-blur-sm px-6 py-4 text-center shadow-sm">
+                    <p className="text-xs uppercase tracking-[0.3em] text-[#2d5a3d]">100% naturel</p>
+                    <p className="mt-2 text-sm font-medium text-[#1a1a1a]">Formules maison développées par Mino Skincare</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -85,198 +180,132 @@ export default function Home() {
         <div className="mb-8">
           <h2 className="text-3xl font-serif text-[#1a1a1a]">Nos catégories</h2>
           <p className="mt-2 max-w-2xl text-sm text-[#555] sm:text-base">
-            Explorez des catégories pensées pour vos routines alimentaires, soin visage, soin corps et offres spéciales.
+            Explorez nos catégories de soins naturels pour le visage, le corps, les cheveux et le maquillage.
           </p>
         </div>
         <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-          <article className="rounded-3xl bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-            <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-3xl bg-[#eef3e8] text-4xl">🥗</div>
-            <h3 className="text-lg font-semibold text-[#1a1a1a]">Alimentation</h3>
-            <p className="mt-2 text-sm text-[#555]">Produits naturels pour une alimentation saine et savoureuse.</p>
-            <p className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-[#8BAF7C]">48 produits</p>
-          </article>
-          <article className="rounded-3xl bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-            <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-3xl bg-[#f5ede4] text-4xl">🧴</div>
-            <h3 className="text-lg font-semibold text-[#1a1a1a]">Soin Visage</h3>
-            <p className="mt-2 text-sm text-[#555]">Routines visage pour hydrater, protéger et sublimer votre peau.</p>
-            <p className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-[#8BAF7C]">32 produits</p>
-          </article>
-          <article className="rounded-3xl bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-            <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-3xl bg-[#e8eef5] text-4xl">🛁</div>
-            <h3 className="text-lg font-semibold text-[#1a1a1a]">Soin Corps</h3>
-            <p className="mt-2 text-sm text-[#555]">Soins corporels doux et nourrissants pour une peau éclatante.</p>
-            <p className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-[#8BAF7C]">27 produits</p>
-          </article>
-          <article className="rounded-3xl bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-            <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-3xl bg-[#f5eee4] text-4xl">🌸</div>
-            <h3 className="text-lg font-semibold text-[#1a1a1a]">Promotions</h3>
-            <p className="mt-2 text-sm text-[#555]">Offres limitées et réductions pour découvrir plus de soins naturels.</p>
-            <p className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-[#8BAF7C]">-20% ce mois</p>
-          </article>
+          {categories.map((category, index) => {
+            const categoryIcons = ['🧴', '🛁', '💄', '💇‍♀️'];
+            const categoryColors = ['#eef3e8', '#f5ede4', '#e8eef5', '#f5eee4'];
+
+            return (
+              <Link key={category.id} href={`/catalogue?category=${category.slug}`}>
+                <article className="rounded-3xl bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md cursor-pointer">
+                  <div className={`mb-4 inline-flex h-16 w-16 items-center justify-center rounded-3xl bg-[${categoryColors[index % categoryColors.length]}] text-4xl`}>
+                    {categoryIcons[index % categoryIcons.length]}
+                  </div>
+                  <h3 className="text-lg font-semibold text-[#1a1a1a]">{category.name}</h3>
+                  <p className="mt-2 text-sm text-[#555]">{category.description}</p>
+                  <p className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-[#8BAF7C]">
+                    {category._count.products} produit{category._count.products > 1 ? 's' : ''}
+                  </p>
+                </article>
+              </Link>
+            );
+          })}
         </div>
       </section>
 
       <section id="vitrine" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="text-3xl font-serif text-[#1a1a1a]">Vitrine Mino Skincare</h2>
+            <h2 className="text-3xl font-serif text-[#1a1a1a]">Produits en vedette</h2>
             <p className="mt-2 max-w-2xl text-sm text-[#555] sm:text-base">
-              Découvrez nos créations maison : sérums, soins visage et rituels bien-être conçus par Mino Skincare pour choyer votre peau avec des ingrédients purs.
+              Découvrez notre sélection de produits phares : soins naturels, maquillage premium et rituels bien-être pour prendre soin de votre peau.
             </p>
           </div>
-          <div className="rounded-full border border-[#d8d4ca] bg-white px-5 py-3 text-sm text-[#555] shadow-sm">
-            Section vitrine dédiée aux produits Mino
-          </div>
+          <Link href="/catalogue" className="rounded-full border border-[#d8d4ca] bg-white px-5 py-3 text-sm text-[#555] shadow-sm transition hover:border-[#2d5a3d] hover:text-[#2d5a3d]">
+            Voir tous les produits
+          </Link>
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-          <article className="rounded-3xl bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-            <div className="mb-4 inline-flex rounded-3xl bg-[#eef3e8] p-4 text-3xl">🌸</div>
-            <h3 className="text-lg font-semibold text-[#1a1a1a]">Sérum éclat Mino</h3>
-            <p className="mt-2 text-sm text-[#555]">Formule riche en actifs végétaux pour illuminer et hydrater les peaux sensibles.</p>
-            <div className="mt-6 flex items-center justify-between gap-3 text-sm font-semibold text-[#2d5a3d]">
-              <span>18 000 Ar</span>
-              <span className="rounded-full bg-[#eef3e8] px-3 py-1">Mino</span>
-            </div>
-          </article>
-          <article className="rounded-3xl bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-            <div className="mb-4 inline-flex rounded-3xl bg-[#f5ede4] p-4 text-3xl">🧴</div>
-            <h3 className="text-lg font-semibold text-[#1a1a1a]">Crème de nuit régénérante</h3>
-            <p className="mt-2 text-sm text-[#555]">Texture onctueuse pour nourrir, régénérer et réveiller une peau douce au réveil.</p>
-            <div className="mt-6 flex items-center justify-between gap-3 text-sm font-semibold text-[#2d5a3d]">
-              <span>24 500 Ar</span>
-              <span className="rounded-full bg-[#f5ede4] px-3 py-1 text-[#2d5a3d]">Mino</span>
-            </div>
-          </article>
-          <article className="rounded-3xl bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-            <div className="mb-4 inline-flex rounded-3xl bg-[#e8eef5] p-4 text-3xl">✨</div>
-            <h3 className="text-lg font-semibold text-[#1a1a1a]">Brume hydratante</h3>
-            <p className="mt-2 text-sm text-[#555]">Spray frais pour apaiser la peau et fixer le maquillage avec un voile naturel.</p>
-            <div className="mt-6 flex items-center justify-between gap-3 text-sm font-semibold text-[#2d5a3d]">
-              <span>12 500 Ar</span>
-              <span className="rounded-full bg-[#e8eef5] px-3 py-1 text-[#2d5a3d]">Mino</span>
-            </div>
-          </article>
-          <article className="rounded-3xl bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-            <div className="mb-4 inline-flex rounded-3xl bg-[#f5eee4] p-4 text-3xl">🌿</div>
-            <h3 className="text-lg font-semibold text-[#1a1a1a]">Gommage doux</h3>
-            <p className="mt-2 text-sm text-[#555]">Exfolie en douceur et révèle une peau lisse et lumineuse sans dessécher.</p>
-            <div className="mt-6 flex items-center justify-between gap-3 text-sm font-semibold text-[#2d5a3d]">
-              <span>15 000 Ar</span>
-              <span className="rounded-full bg-[#f5eee4] px-3 py-1 text-[#2d5a3d]">Mino</span>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section id="boutique" className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8 lg:pb-16">
-        <div className="mb-8">
-          <h2 className="text-3xl font-serif text-[#1a1a1a]">E-commerce et marques partenaires</h2>
-          <p className="mt-2 max-w-2xl text-sm text-[#555] sm:text-base">
-            Parcourez une sélection de produits cosmétiques de confiance, mêlant nos créations Mino et les meilleures marques naturelles du marché.
-          </p>
-        </div>
-
-        <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-          <article className="overflow-hidden rounded-3xl border border-[#e8e4dc] bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-            <div className="flex h-44 items-center justify-center bg-[#eef3e8] text-5xl">🍯</div>
-            <div className="p-6">
-              <div className="mb-2 inline-flex rounded-full bg-[#2d5a3d] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-white">Bestseller</div>
-              <h3 className="text-base font-semibold text-[#1a1a1a]">Miel Bio de Fleurs</h3>
-              <p className="mt-2 text-sm text-[#777]">Ferme du Soleil</p>
-              <div className="mt-4 flex items-center gap-2 text-[#E6A817]">★★★★★</div>
-              <div className="mt-4 flex items-center justify-between gap-3">
-                <div className="text-lg font-semibold text-[#2d5a3d]">12 000 Ar</div>
-                <button className="rounded-xl bg-[#2d5a3d] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#23472e]">+ Panier</button>
-              </div>
-            </div>
-          </article>
-          <article className="overflow-hidden rounded-3xl border border-[#e8e4dc] bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-            <div className="flex h-44 items-center justify-center bg-[#f5ede4] text-5xl">🌿</div>
-            <div className="p-6">
-              <div className="mb-2 inline-flex rounded-full bg-[#2d5a3d] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-white">Nouveau</div>
-              <h3 className="text-base font-semibold text-[#1a1a1a]">Sérum Visage Aloe</h3>
-              <p className="mt-2 text-sm text-[#777]">NaturGlow</p>
-              <div className="mt-4 flex items-center gap-2 text-[#E6A817]">★★★★☆</div>
-              <div className="mt-4 flex items-center justify-between gap-3">
-                <div className="text-lg font-semibold text-[#2d5a3d]">34 000 Ar</div>
-                <button className="rounded-xl bg-[#2d5a3d] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#23472e]">+ Panier</button>
-              </div>
-            </div>
-          </article>
-          <article className="overflow-hidden rounded-3xl border border-[#e8e4dc] bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-            <div className="flex h-44 items-center justify-center bg-[#e8eef5] text-5xl">🫐</div>
-            <div className="p-6">
-              <h3 className="text-base font-semibold text-[#1a1a1a]">Mix Superfruits Secs</h3>
-              <p className="mt-2 text-sm text-[#777]">NutriNat</p>
-              <div className="mt-4 flex items-center gap-2 text-[#E6A817]">★★★★★</div>
-              <div className="mt-4 flex items-center justify-between gap-3">
-                <div className="text-lg font-semibold text-[#2d5a3d]">8 500 Ar</div>
-                <button className="rounded-xl bg-[#2d5a3d] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#23472e]">+ Panier</button>
-              </div>
-            </div>
-          </article>
-          <article className="overflow-hidden rounded-3xl border border-[#e8e4dc] bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-            <div className="flex h-44 items-center justify-center bg-[#f5eee4] text-5xl">🧖</div>
-            <div className="p-6">
-              <div className="mb-2 inline-flex rounded-full bg-[#2d5a3d] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-white">-20%</div>
-              <h3 className="text-base font-semibold text-[#1a1a1a]">Masque Argile Rose</h3>
-              <p className="mt-2 text-sm text-[#777]">PureSkin</p>
-              <div className="mt-4 flex items-center gap-2 text-[#E6A817]">★★★★☆</div>
-              <div className="mt-4 flex items-center justify-between gap-3">
-                <div>
-                  <div className="text-lg font-semibold text-[#2d5a3d]">18 000 Ar</div>
-                  <div className="text-xs text-[#999] line-through">22 500 Ar</div>
+          {featuredProducts.map((product) => (
+            <Link key={product.id} href={`/catalogue/${product.id}`}>
+              <article className="rounded-3xl bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md cursor-pointer">
+                <div className="mb-4 inline-flex rounded-3xl bg-[#eef3e8] p-4 text-3xl">
+                  {product.category?.name === 'Soins du visage' ? '🧴' :
+                   product.category?.name === 'Soins du corps' ? '🛁' :
+                   product.category?.name === 'Maquillage' ? '💄' :
+                   product.category?.name === 'Soins capillaires' ? '💇‍♀️' : '🌿'}
                 </div>
-                <button className="rounded-xl bg-[#2d5a3d] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#23472e]">+ Panier</button>
-              </div>
-            </div>
-          </article>
+                <h3 className="text-lg font-semibold text-[#1a1a1a]">{product.name}</h3>
+                <p className="mt-2 text-sm text-[#555] line-clamp-2">{product.description}</p>
+                <div className="mt-6 flex items-center justify-between gap-3 text-sm font-semibold text-[#2d5a3d]">
+                  <div className="flex flex-col">
+                    <span>{product.price.toFixed(2)} €</span>
+                    {product.compareAtPrice && (
+                      <span className="text-xs text-[#999] line-through">{product.compareAtPrice.toFixed(2)} €</span>
+                    )}
+                  </div>
+                  <span className="rounded-full bg-[#eef3e8] px-3 py-1 text-xs">
+                    {product.brand?.name}
+                  </span>
+                </div>
+                {product.isOnSale && (
+                  <div className="mt-2 inline-flex items-center rounded-full bg-red-100 px-2 py-1 text-xs font-semibold text-red-800">
+                    En promotion
+                  </div>
+                )}
+              </article>
+            </Link>
+          ))}
         </div>
       </section>
-
       <section id="avis" className="bg-white py-12 sm:py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-6 lg:grid-cols-2">
+            {otherProducts.map((product) => (
+              <Link key={product.id} href={`/catalogue/${product.id}`}>
+                <article className="rounded-3xl bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+                  <div className="mb-4 inline-flex rounded-3xl bg-[#eef3e8] p-4 text-3xl">
+                    {product.category?.name === 'Soins du visage' ? '🧴' :
+                     product.category?.name === 'Soins du corps' ? '🛁' :
+                     product.category?.name === 'Maquillage' ? '💄' :
+                     product.category?.name === 'Soins capillaires' ? '💇‍♀️' : '🌿'}
+                  </div>
+                  <h3 className="text-lg font-semibold text-[#1a1a1a]">{product.name}</h3>
+                  <p className="mt-2 text-sm text-[#555] line-clamp-2">{product.description}</p>
+                  <div className="mt-6 flex items-center justify-between gap-3 text-sm font-semibold text-[#2d5a3d]">
+                    <span>{product.price.toFixed(2)} €</span>
+                    <span className="rounded-full bg-[#eef3e8] px-3 py-1 text-xs">
+                      {product.brand?.name}
+                    </span>
+                  </div>
+                </article>
+              </Link>
+            ))}
+          </div>
+          </div>
+        </section>
+
+      <section id="testimonials" className="bg-white py-12 sm:py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-8">
             <h2 className="text-3xl font-serif text-[#1a1a1a]">Ce que disent nos clients</h2>
             <p className="mt-2 max-w-2xl text-sm text-[#555] sm:text-base">
-              Plus de 2 400 avis vérifiés sur notre boutique et nos produits naturels.
+              Découvrez les avis de nos clients satisfaits sur nos produits de soins naturels.
             </p>
           </div>
           <div className="grid gap-6 lg:grid-cols-3">
-            <article className="rounded-3xl bg-[#FAFAF7] p-6 shadow-sm">
-              <p className="mb-4 text-sm font-semibold text-[#E6A817]">★★★★★</p>
-              <p className="mb-6 text-sm leading-7 text-[#555] italic">“Le sérum visage est incroyable, ma peau est transformée en 2 semaines. Je recommande les yeux fermés !”</p>
-              <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#eef3e8] text-sm font-semibold text-[#2d5a3d]">SR</div>
-                <div>
-                  <p className="text-sm font-semibold text-[#1a1a1a]">Sophie R.</p>
-                  <p className="text-xs text-[#999]">Cliente depuis 2023</p>
+            {reviews.map((review) => (
+              <article key={review.id} className="rounded-3xl bg-[#FAFAF7] p-6 shadow-sm">
+                <p className="mb-4 text-sm font-semibold text-[#E6A817]">
+                  {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
+                </p>
+                <p className="mb-3 text-sm font-semibold text-[#1a1a1a]">{review.title}</p>
+                <p className="mb-6 text-sm leading-7 text-[#555] italic">"{review.comment}"</p>
+                <div className="flex items-center gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#eef3e8] text-sm font-semibold text-[#2d5a3d]">
+                    {review.user?.firstName?.charAt(0)}{review.user?.lastName?.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-[#1a1a1a]">{review.user?.firstName} {review.user?.lastName}</p>
+                    <p className="text-xs text-[#999]">À propos: {review.product?.name}</p>
+                  </div>
                 </div>
-              </div>
-            </article>
-            <article className="rounded-3xl bg-[#FAFAF7] p-6 shadow-sm">
-              <p className="mb-4 text-sm font-semibold text-[#E6A817]">★★★★★</p>
-              <p className="mb-6 text-sm leading-7 text-[#555] italic">“Livraison ultra rapide et produits de qualité. Le miel bio est excellent, toute ma famille en raffole.”</p>
-              <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#eef3e8] text-sm font-semibold text-[#2d5a3d]">MH</div>
-                <div>
-                  <p className="text-sm font-semibold text-[#1a1a1a]">Marc H.</p>
-                  <p className="text-xs text-[#999]">Acheteur vérifié</p>
-                </div>
-              </div>
-            </article>
-            <article className="rounded-3xl bg-[#FAFAF7] p-6 shadow-sm">
-              <p className="mb-4 text-sm font-semibold text-[#E6A817]">★★★★☆</p>
-              <p className="mb-6 text-sm leading-7 text-[#555] italic">“Très bonne sélection de produits naturels. Service client très réactif. Je reviendrai avec plaisir !”</p>
-              <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#eef3e8] text-sm font-semibold text-[#2d5a3d]">AL</div>
-                <div>
-                  <p className="text-sm font-semibold text-[#1a1a1a]">Aicha L.</p>
-                  <p className="text-xs text-[#999]">Cliente fidèle</p>
-                </div>
-              </div>
-            </article>
+              </article>
+            ))}
           </div>
         </div>
       </section>

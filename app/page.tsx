@@ -87,8 +87,8 @@ export default async function Home() {
   };
 
   return (
-    <main className="bg-[#FAFAF7] text-[#1a1a1a] antialiased">
-      <header className="sticky top-0 z-30 border-b border-[#e8e4dc] bg-white/95 backdrop-blur-sm">
+    <main className=" bg-[#fde8e8] text-[#1a1a1a] antialiased">
+      <header className="sticky top-0 z-30 border-b border-[#e8e4dc] bg-[#fde8e8] backdrop-blur-sm">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <div className="font-serif text-xl font-semibold text-[#2d5a3d]">
             Mino<span className="italic text-[#8BAF7C]">Skincare</span>
@@ -110,7 +110,7 @@ export default async function Home() {
         </div>
       </header>
 
-      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16 ">
         <div className="grid gap-10 lg:grid-cols-[1.1fr_.9fr] lg:gap-16">
           <div className="flex flex-col justify-center gap-6">
             <span className="text-xs uppercase tracking-[0.3em] text-[#8BAF7C]">Nouveau — Collection Printemps</span>
@@ -131,15 +131,17 @@ export default async function Home() {
             </div>
           </div>
 
+          {/* bg-[#FAFAF7]
           <div className="relative overflow-hidden rounded-[30px] bg-[#EEF3E8] p-10 shadow-[0_24px_60px_rgba(45,90,61,0.12)]">
-            <div className="absolute -right-10 -top-10 h-56 w-56 rounded-full bg-[#c8deb4] opacity-60 blur-[1px]"></div>
+            <div className="absolute -right-10 -top-10 h-56 w-56 rounded-full bg-[#c8deb4] opacity-60 blur-[0px]"></div>
             <div className="relative flex h-full items-center justify-center">
               <div className="relative w-full h-full min-h-100 rounded-2xl overflow-hidden shadow-lg">
                 <Image
-                  src="/premium_photo-1682096423780-41ca1b04af68.avif"
+                  src="/u_ff2b6ic1rv-cosmetics-7713225_1920.png"
                   alt="Femme avec une peau soyeuse et rayonnante - Mino Skincare"
                   fill
                   className="object-cover object-center"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 45vw"
                   priority
                 />
                 <div className="absolute inset-0 bg-linear-to-t from-black/30 via-transparent to-transparent"></div>
@@ -151,7 +153,21 @@ export default async function Home() {
                 </div>
               </div>
             </div>
-          </div>
+            shadow-[0_24px_60px_rgba(45,90,61,0.12)]
+          </div> */}
+
+        <div className=''>
+          <Image
+            src="/téléchargement-removebg-preview.png"
+            alt="Femme avec une peau soyeuse et rayonnante - Mino Skincare"
+            width={800}
+            height={600}
+            className="w-full h-auto object-cover object-center "
+            sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 45vw'
+            priority
+          />
+        </div>
+
         </div>
       </section>
 
@@ -190,7 +206,7 @@ export default async function Home() {
 
             return (
               <Link key={category.id} href={`/catalogue?category=${category.slug}`}>
-                <article className="rounded-3xl bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md cursor-pointer">
+                <article className="rounded-3xl bg-[#f6f3f3] p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md cursor-pointer">
                   <div className={`mb-4 inline-flex h-16 w-16 items-center justify-center rounded-3xl bg-[${categoryColors[index % categoryColors.length]}] text-4xl`}>
                     {categoryIcons[index % categoryIcons.length]}
                   </div>
@@ -214,7 +230,7 @@ export default async function Home() {
               Découvrez notre sélection de produits phares : soins naturels, maquillage premium et rituels bien-être pour prendre soin de votre peau.
             </p>
           </div>
-          <Link href="/catalogue" className="rounded-full border border-[#d8d4ca] bg-white px-5 py-3 text-sm text-[#555] shadow-sm transition hover:border-[#2d5a3d] hover:text-[#2d5a3d]">
+          <Link href="/catalogue" className="rounded-full border border-[#d8d4ca] bg-[#f6f3f3] px-5 py-3 text-sm text-[#555] shadow-sm transition hover:border-[#2d5a3d] hover:text-[#2d5a3d]">
             Voir tous les produits
           </Link>
         </div>
@@ -222,7 +238,7 @@ export default async function Home() {
         <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
           {featuredProducts.map((product) => (
             <Link key={product.id} href={`/catalogue/${product.id}`}>
-              <article className="rounded-3xl bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md cursor-pointer">
+              <article className="rounded-3xl bg-[#f6f3f3] p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md cursor-pointer">
                 <div className="mb-4 inline-flex rounded-3xl bg-[#eef3e8] p-4 text-3xl">
                   {product.category?.name === 'Soins du visage' ? '🧴' :
                    product.category?.name === 'Soins du corps' ? '🛁' :
@@ -252,6 +268,7 @@ export default async function Home() {
           ))}
         </div>
       </section>
+
       <section id="avis" className="bg-white py-12 sm:py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-6 lg:grid-cols-2">
@@ -311,7 +328,7 @@ export default async function Home() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
-        <div className="rounded-4xl bg-[#EEF3E8] px-6 py-10 sm:px-10 sm:py-14">
+        <div className="rounded-4xl bg-[#fde8e8] px-6 py-10 sm:px-10 sm:py-14">
           <div className="grid gap-8 lg:grid-cols-[1.3fr_0.7fr] lg:items-center">
             <div>
               <h2 className="text-3xl font-serif text-[#1a1a1a]">Rejoignez notre communauté</h2>

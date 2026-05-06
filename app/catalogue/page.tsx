@@ -229,7 +229,13 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
                 >
                   <div className="relative aspect-square overflow-hidden bg-[#f8f8f6]">
                     <div className="flex h-full w-full items-center justify-center text-6xl">
-                      {getProductImage(product) === '/placeholder-product.jpg' ? '🧴' : '📦'}
+                      {getProductImage(product) === '/placeholder-product.jpg' ? (
+                        <span className="text-6xl">🧴</span>) : (
+                        <Image
+                          src={getProductImage(product)}
+                          alt={product.name}
+                          className="h-full w-full object-cover"/>
+                        )}
                     </div>
                     {product.isFeatured && (
                       <div className="absolute top-3 left-3 rounded-full bg-[#2d5a3d] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-white">

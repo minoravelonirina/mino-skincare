@@ -11,6 +11,10 @@ interface ProductPageProps {
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const id = parseInt(params.productId, 10)
+  if (!Number.isInteger(id) || id <= 0) {
+    // invalid id provided in URL, treat as 404
+    return notFound()
+  }
   const product = await prisma.product.findUnique({
     where: { id },
     include: {

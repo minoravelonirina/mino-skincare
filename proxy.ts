@@ -1,13 +1,11 @@
-// middleware.ts
-import { NextResponse } from 'next/server'
-import { NextRequest } from 'next/server'
+import { NextResponse, NextRequest } from 'next/server'
 import { verifyAccessToken } from './lib/auth';
+import { intlayerProxy } from "next-intlayer/proxy";
 
 const LOCALES = ['fr', 'en']
 const DEFAULT_LOCALE = 'fr'
 
 function isPublicFile(pathname: string) {
-  // ignore assets, api, _next, and files with extensions
   if (pathname.startsWith('/_next') || pathname.startsWith('/api') || pathname === '/favicon.ico') return true;
   return /\.[a-zA-Z0-9]+$/.test(pathname);
 }
@@ -20,7 +18,7 @@ function stripLocale(pathname: string) {
   return pathname;
 }
 
-export default async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
   const pathname = url.pathname;
 
@@ -81,5 +79,12 @@ export default async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: '/:path*'
+  matcher: 
+    "/((?!api|static|assets|robots|sitemap|sw|service-worker|manifest|.*\\..*|_next).*)"
 }
+
+
+
+export const proxy = intlayerProxy;
+
+

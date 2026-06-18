@@ -1,6 +1,6 @@
 import { getIntlayer } from "next-intlayer";
 import { getLocale } from "next-intlayer/server";
-import Footer from "./components/Footer";
+import Footer from "../components/Footer";
 
 import {
   getCategories,
@@ -9,18 +9,18 @@ import {
   getReviews,
 } from "@/lib/home";
 
-import Header from "./components/home/Header";
-import HeroSection from "./components/home/HeroSection";
-import PromiseBar from "./components/home/PromiseBar";
-import CategoriesSection from "./components/home/CategoriesSection";
-import FeaturedProductsSection from "./components/home/FeaturedProductsSection";
-import MoreProductsSection from "./components/home/MoreProductsSection";
-import TestimonialsSection from "./components/home/TestimonialsSection";
-import NewsletterSection from "./components/home/NewsletterSection";
+import Header from "../components/home/Header";
+import HeroSection from "../components/home/HeroSection";
+import PromiseBar from "../components/home/PromiseBar";
+import CategoriesSection from "../components/home/CategoriesSection";
+import FeaturedProductsSection from "../components/home/FeaturedProductsSection";
+import MoreProductsSection from "../components/home/MoreProductsSection";
+import TestimonialsSection from "../components/home/TestimonialsSection";
+import NewsletterSection from "../components/home/NewsletterSection";
 
 export default async function Home() {
   const locale = await getLocale();
-  const content = getIntlayer("home-page", locale);
+  const content = getIntlayer("page", locale);
   let categories = [] as any[];
   let featuredProducts = [] as any[];
   let otherProducts = [] as any[];

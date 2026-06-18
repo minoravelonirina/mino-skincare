@@ -1,4 +1,5 @@
 import Link from "next/link";
+import LanguageSwitcher from "../LanguageSwitcher";
 
 export default function Header({ content }: { content: any }) {
   return (
@@ -24,6 +25,7 @@ export default function Header({ content }: { content: any }) {
         </nav>
 
         <div className="flex items-center gap-3 text-sm text-[#555]">
+          <LanguageSwitcher />
           <Link
             href="/login"
             className="rounded-full border border-[#d8d4ca] px-4 py-2 transition hover:border-[#2d5a3d] hover:text-[#2d5a3d]"

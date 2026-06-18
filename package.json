@@ -34,6 +34,7 @@
     "react-dom": "19.2.4"
   },
   "devDependencies": {
+    "@intlayer/swc": "^8.12.4",
     "@openapitools/openapi-generator-cli": "^2.5.0",
     "@tailwindcss/postcss": "^4",
     "@types/jsonwebtoken": "^9.0.10",

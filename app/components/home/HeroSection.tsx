@@ -35,7 +35,7 @@ export default function HeroSection({ content }: { content: any }) {
         <div>
           <Image
             src="/téléchargement-removebg-preview.png"
-            alt="hero image"
+            alt={content.imageAlt}
             width={800}
             height={600}
             className="h-auto w-full object-cover object-center"

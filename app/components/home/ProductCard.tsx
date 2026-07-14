@@ -1,8 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getCategoryVisual, formatPrice } from "@/lib/home";
-
-export default function ProductCard({ product, saleBadge, showCompareAtPrice = false, variant = "default" }: any) {
+import { getLocaleFromPath } from "intlayer";
+export default async function ProductCard({ product, saleBadge, showCompareAtPrice = false, variant = "default" }: any) {
+  const locale = await getLocaleFromPath()
   const visual = getCategoryVisual(product.category?.name);
   const backgroundClass = variant === "compact" ? "bg-white" : "bg-[#f6f3f3]";
 
@@ -12,39 +13,41 @@ export default function ProductCard({ product, saleBadge, showCompareAtPrice = f
     if (product.images) {
       const imgs = JSON.parse(product.images);
       const pick = Array.isArray(imgs) ? imgs[0] : imgs;
-      if (typeof pick === "string") imageUrl = pick;
+      // if (typeof pick === "string") imageUrl = pick;
+      if (typeof pick === "string") imageUrl = "/images/products/Creme_hydratante_apaisante.jpg";
       else if (pick && typeof pick === "object") {
         // common shape: { url: '...' }
-        if (typeof pick.url === "string") imageUrl = pick.url;
+        if (typeof pick.url === "string") imageUrl = pick;
       }
     }
   } catch (_) {
     imageUrl = null;
   }
 
-  function isValidImageSrc(src: string | null) {
-    if (!src || typeof src !== "string") return false;
-    const s = src.trim();
-    if (s.startsWith("/")) return true; // local path
-    if (s.startsWith("http://") || s.startsWith("https://")) return true; // absolute url
-    if (s.startsWith("data:")) return true; // data URI
-    return false;
-  }
+  // function isValidImageSrc(src: string | null) {
+  //   if (!src || typeof src !== "string") return false;
+  //   const s = src.trim();
+  //   if (s.startsWith("/")) return true; // local path
+  //   if (s.startsWith("http://") || s.startsWith("https://")) return true; // absolute url
+  //   if (s.startsWith("data:")) return true; // data URI
+  //   return false;
+  // }
 
-  if (!isValidImageSrc(imageUrl)) {
-    imageUrl = null;
-  }
+  // if (!isValidImageSrc(imageUrl)) {
+  //   imageUrl = null;
+  // }
 
   return (
-    <Link href={`/catalogue/${product.id}`}>
-      <article className={`cursor-pointer rounded-3xl p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md duration-200 ease-out ${backgroundClass}`}>
+    <Link href={`/${locale}/catalogue/${product.id}`}>
+      <article className={`cursor-pointer rounded-3xl p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md duration-200 ease-out ${backgroundClass} `}>
         {imageUrl && (
           <div className="mb-4 h-44 w-full overflow-hidden rounded-2xl bg-white">
             <Image src={imageUrl} alt={product.name || "product"} width={800} height={600} className="h-full w-full object-cover" loading="lazy" sizes="(max-width: 768px) 100vw, 33vw" />
           </div>
         )}
 
-        <div className={`mb-4 inline-flex rounded-3xl px-4 py-3 text-sm font-semibold text-[#2d5a3d] ${visual.className}`}>
+        {/* <div className={` mb-4 inline-flex rounded-3xl px-4 py-3 text-sm font-semibold text-[#2d5a3d] ${visual.className}`}> */}
+        <div className={`absolute top-5 px-4 py-2  border border-amber-600 inline-flex rounded-3xl text-sm font-semibold text-[#2d5a3d] ${visual.className}`}>
           {visual.label}
         </div>
         <h3 className="text-lg font-semibold text-[#1a1a1a]">{product.name}</h3>

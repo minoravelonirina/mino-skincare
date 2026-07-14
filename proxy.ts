@@ -28,14 +28,30 @@ export async function middleware(request: NextRequest) {
   }
 
   // Locale handling: if no locale prefix, redirect to preferred (or default)
+  // NOTE: only redirect the root path `/` to a locale. Keep other
+  // non-prefixed paths (like `/login`, `/cart`, etc.) intact so existing
+  // app routes continue to work.
   const parts = pathname.split('/').filter(Boolean);
   const first = parts[0];
   if (!LOCALES.includes(first)) {
-    // determine preferred from Accept-Language header
-    const accept = request.headers.get('accept-language') || '';
-    const preferred = accept.toLowerCase().startsWith('en') ? 'en' : DEFAULT_LOCALE;
-    const target = '/' + [preferred, ...parts].filter(Boolean).join('/');
-    return NextResponse.redirect(new URL(target + url.search, request.url));
+    // only redirect when requesting the site root (no path segments)
+    if (parts.length === 0) {
+      const accept = request.headers.get('accept-language') || '';
+      const preferred = accept.toLowerCase().startsWith('en') ? 'en' : DEFAULT_LOCALE;
+      const target = '/' + preferred;
+      return NextResponse.redirect(new URL(target + url.search, request.url));
+    }
+    // otherwise continue without forcing a locale prefix
+  }
+
+  // If the request includes a locale prefix (e.g. /fr/catalogue),
+  // rewrite the pathname to the internal non-prefixed route so the
+  // existing pages (e.g. /catalogue) are served while keeping the
+  // URL visible to the user.
+  if (LOCALES.includes(first) && parts.length > 1) {
+    const rewritten = stripLocale(pathname) || '/';
+    url.pathname = rewritten;
+    return NextResponse.rewrite(url);
   }
 
   // Auth logic: operate on path without locale prefix

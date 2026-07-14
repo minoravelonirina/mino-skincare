@@ -21,6 +21,7 @@ import NewsletterSection from "../components/home/NewsletterSection";
 export default async function Home() {
   const locale = await getLocale();
   const content = getIntlayer("page", locale);
+  const isFrench = locale === "fr";
   let categories = [] as any[];
   let featuredProducts = [] as any[];
   let otherProducts = [] as any[];
@@ -34,31 +35,49 @@ export default async function Home() {
       getReviews(),
     ]);
   } catch (err) {
-    // Log the error server-side for diagnosis and return a safe fallback UI.
-    // Common cause: database not migrated / tables missing (Prisma P2021).
-    // Keep the page loadable so dev can see instructions.
-    // eslint-disable-next-line no-console
     console.error("Home data fetch failed:", err);
 
     return (
       <main className="bg-[#fde8e8] text-[#1a1a1a] antialiased">
         <Header content={content.navigation} />
         <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
-          <div className="rounded-lg border border-red-200 bg-white p-6">
-            <h2 className="text-lg font-semibold text-red-700">Erreur de base de données</h2>
-            <p className="mt-2 text-sm text-[#555]">
-              L'application n'a pas pu charger les données. Il est probable que la base de
-              données n'ait pas été initialisée ou que les migrations n'aient pas été appliquées.
+          <div className="rounded-2xl border border-[#f1c5c5] bg-white p-8 shadow-sm">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#b45b5b]">
+              {isFrench ? "Momentané" : "Temporary"}
             </p>
-            <div className="mt-4 text-sm text-[#333]">
-              <p className="font-semibold">Actions recommandées :</p>
-              <ol className="ml-4 list-decimal">
-                <li>Vérifier que `DATABASE_URL` est défini dans votre environnement.</li>
-                <li>Exécuter les migrations Prisma : <code>npx prisma migrate dev</code> ou <code>npx prisma db push</code>.</li>
-                <li>Relancer le serveur de développement : <code>pnpm dev</code>.</li>
-              </ol>
+            <h2 className="mt-3 text-2xl font-semibold text-[#1f1f1f]">
+              {isFrench ? "Nous préparons votre expérience" : "We’re preparing your experience"}
+            </h2>
+            <p className="mt-3 text-base leading-7 text-[#555]">
+              {isFrench
+                ? "La boutique est en cours de synchronisation. Merci de patienter quelques instants pendant que les contenus se chargent."
+                : "The storefront is syncing its latest content. Please wait a moment while the experience is loading."}
+            </p>
+            <div className="mt-6 rounded-xl bg-[#fdf3f3] p-4 text-sm text-[#333]">
+              <p className="font-semibold">
+                {isFrench ? "Ce que vous pouvez vérifier" : "What you can check"}
+              </p>
+              <ul className="mt-2 ml-5 list-disc space-y-1">
+                <li>
+                  {isFrench
+                    ? "Votre configuration de base de données est bien renseignée."
+                    : "Your database configuration is properly set up."}
+                </li>
+                <li>
+                  {isFrench
+                    ? "Les migrations Prisma ont bien été appliquées."
+                    : "The Prisma migrations have been applied successfully."}
+                </li>
+                <li>
+                  {isFrench
+                    ? "Le serveur de développement a été redémarré après la mise à jour."
+                    : "The development server was restarted after the update."}
+                </li>
+              </ul>
             </div>
-            <pre className="mt-4 overflow-auto bg-[#fafafa] p-2 text-xs text-red-600">{String(err)}</pre>
+            <pre className="mt-6 overflow-auto rounded-lg bg-[#faf5f5] p-3 text-xs text-[#a64a4a]">
+              {String(err)}
+            </pre>
           </div>
         </div>
         <Footer />

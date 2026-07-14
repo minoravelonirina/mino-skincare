@@ -1,16 +1,12 @@
 'use client';																	
 																	
 import { useEffect, useState } from 'react';																	
-import { useRouter } from 'next/navigation';																	
+import { useRouter } from 'next/navigation';	
+import { getLocaleFromPath } from 'intlayer';
+import { UserData } from "../../../lib/types"																																
 																	
-interface UserData {																	
-  userId: string;																	
-  email: string;																	
-  firstname: string;
-  lastname: string																	
-}																	
-																	
-export default function DashboardPage() {																	
+export default function DashboardPage() {	
+  const locale = getLocaleFromPath()																
   const router = useRouter();																	
   const [userData, setUserData] = useState<UserData | null>(null);																	
   const [protectedData, setProtectedData] = useState<any>(null);																	
@@ -40,7 +36,7 @@ export default function DashboardPage() {
     try {																	
       await fetch('/api/auth/logout', { method: 'POST' });
       router.refresh();																		
-      router.push('/login');																												
+      router.push(`/${locale}/login`);																												
     } catch (error) {																	
       console.error('Logout error:', error);																	
     }																	

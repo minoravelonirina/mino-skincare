@@ -1,35 +1,9 @@
 import prisma from "@/lib/prisma";
 import Image from "next/image";
 import Link from "next/link";
-
-interface Product {
-  id: number;
-  name: string;
-  description: string | null;
-  price: number;
-  compareAtPrice: number | null;
-  images: string | null;
-  isFeatured: boolean;
-  isOnSale: boolean;
-  category: {
-    id: number;
-    name: string;
-    slug: string;
-  } | null;
-  brand: {
-    id: number;
-    name: string;
-  } | null;
-}
-
-interface Category {
-  id: number;
-  name: string;
-  slug: string;
-  _count: {
-    products: number;
-  };
-}
+import { getLocaleFromPath } from "intlayer";
+import { CataloguePageProps, Product, Category} from "@/lib/types"
+import Header from "@/app/components/home/Header";
 
 async function getProducts(search?: string, category?: string) {
   const where: any = {
@@ -76,14 +50,8 @@ async function getCategories() {
   return categories;
 }
 
-interface CataloguePageProps {
-  searchParams: Promise<{
-    search?: string;
-    category?: string;
-  }>;
-}
-
 export default async function CataloguePage({ searchParams }: CataloguePageProps) {
+  const locale = getLocaleFromPath()
   const params = await searchParams;
   const [products, categories] = await Promise.all([
     getProducts(params.search, params.category),
@@ -112,27 +80,6 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
   return (
     <main className="bg-[#FAFAF7] text-[#1a1a1a] antialiased">
       {/* Header */}
-      <header className="sticky top-0 z-30 border-b border-[#e8e4dc] bg-white/95 backdrop-blur-sm">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-          <Link href="/" className="font-serif text-xl font-semibold text-[#2d5a3d]">
-            Mino<span className="italic text-[#8BAF7C]">Skincare</span>
-          </Link>
-          <nav className="hidden items-center gap-8 text-sm text-[#555] md:flex">
-            <Link href="/" className="transition hover:text-[#2d5a3d]">Accueil</Link>
-            <Link href="/catalogue" className="font-semibold text-[#2d5a3d]">Catalogue</Link>
-            <Link href="#categories" className="transition hover:text-[#2d5a3d]">Catégories</Link>
-            <Link href="#avis" className="transition hover:text-[#2d5a3d]">Avis</Link>
-          </nav>
-          <div className="flex items-center gap-4 text-sm text-[#555]">
-            <button className="rounded-full border border-[#d8d4ca] px-4 py-2 transition hover:border-[#2d5a3d] hover:text-[#2d5a3d]">
-              Connexion
-            </button>
-            <button className="flex items-center gap-2 rounded-full bg-[#2d5a3d] px-4 py-2 text-white transition hover:bg-[#23472e]">
-              Panier <span className="rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-semibold">0</span>
-            </button>
-          </div>
-        </div>
-      </header>
 
       {/* Hero Section */}
       <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
@@ -165,7 +112,7 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
             {/* Categories Filter */}
             <div className="flex flex-wrap gap-2">
               <Link
-                href="/catalogue"
+                href={`/${locale}/catalogue`}
                 className={`rounded-full px-4 py-2 text-sm font-medium transition ${
                   !params.category
                     ? 'bg-[#2d5a3d] text-white'
@@ -177,7 +124,7 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
               {categories.map((category:any) => (
                 <Link
                   key={category.id}
-                  href={`/catalogue?category=${category.slug}`}
+                  href={`/${locale}/catalogue?category=${category.slug}`}
                   className={`rounded-full px-4 py-2 text-sm font-medium transition ${
                     params.category === category.slug
                       ? 'bg-[#2d5a3d] text-white'
@@ -200,7 +147,7 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
             <h3 className="text-xl font-semibold text-[#1a1a1a] mb-2">Aucun produit trouvé</h3>
             <p className="text-[#555] mb-6">Essayez de modifier vos critères de recherche.</p>
             <Link
-              href="/catalogue"
+              href={`/${locale}/catalogue`}
               className="inline-flex items-center justify-center rounded-md bg-[#2d5a3d] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#23472e]"
             >
               Voir tous les produits
@@ -236,7 +183,8 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
                           alt={product.name}
                           width={400}
                           height={300}
-                          className="h-full w-full object-cover"/>
+                          className="h-full w-full object-cover"
+                          loading="eager"/>
                         )}
                     </div>
                     {product.isFeatured && (

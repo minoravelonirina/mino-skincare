@@ -1,11 +1,11 @@
 'use client';
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { getLocaleFromPath } from "intlayer";
 
 export default function LoginPage() {
-    const router = useRouter();
+    const locale  = getLocaleFromPath()
     const [formData, setFormData] = useState({
         email: "",
         password: ""
@@ -41,11 +41,11 @@ export default function LoginPage() {
     }
 
     const handleClick = () =>{
-        window.location.href = '/dashboard';
+        window.location.href = `/${locale}/dashboard`;
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-[#FAFAF7] py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen flex items-center justify-center bg[#FAFAF7] bg-[#fde8e8]/95  py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-8">
                 <div className="text-center">
                     <div className="font-serif text-2xl font-semibold text-[#2d5a3d] mb-2">
@@ -107,8 +107,11 @@ export default function LoginPage() {
                         </button>
 
                         <div className="text-sm text-center">
-                            <Link href="/register" className="font-medium text-[#2d5a3d] hover:text-[#23472e] transition-colors">
-                                Pas encore de compte ? S&apos;inscrire
+                            <Link 
+                                href={`/${locale}/register`} 
+                                className="font-medium text-[#2d5a3d] hover:text-[#23472e] transition-colors"
+                            >
+                                Pas encore de compte ? <span className="font-bold">S'inscrire</span>
                             </Link>
                         </div>
                     </form>

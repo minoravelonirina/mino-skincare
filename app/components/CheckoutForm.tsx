@@ -1,23 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
-
-interface CartProduct {
-  id: number
-  name: string
-  price: number
-}
-
-export interface CartItemData {
-  id: number
-  quantity: number
-  product: CartProduct
-}
-
-interface CheckoutFormProps {
-  cartItems: CartItemData[]
-  totalAmount: number
-}
+import { CheckoutFormProps } from "../../lib/types"
 
 export default function CheckoutForm({ cartItems, totalAmount }: CheckoutFormProps) {
   const [formData, setFormData] = useState({

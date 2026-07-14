@@ -1,10 +1,7 @@
 "use client"
 
 import { useState } from "react"
-
-interface AddToCartFormProps {
-  productId: number
-}
+import { AddToCartFormProps } from "../../lib/types"
 
 export default function AddToCartForm({ productId }: AddToCartFormProps) {
   const [quantity, setQuantity] = useState(1)

@@ -1,7 +1,8 @@
 'use client';								
 								
 import { useState, useEffect } from 'react';								
-import { useRouter } from 'next/navigation';								
+import { useRouter } from 'next/navigation';	
+import { getLocaleFromPath } from 'intlayer';							
 								
 interface User {								
   userId: string;								
@@ -12,7 +13,8 @@ interface User {
 export function useAuth() {								
   const [user, setUser] = useState<User | null>(null);								
   const [loading, setLoading] = useState(true);								
-  const router = useRouter();								
+  const router = useRouter();		
+  const locale = getLocaleFromPath()						
 								
   useEffect(() => {								
     checkAuth();								
@@ -55,7 +57,7 @@ export function useAuth() {
   const logout = async () => {								
     await fetch('/api/auth/logout', { method: 'POST' });								
     setUser(null);								
-    router.push('/login');								
+    router.push(`/${locale}/login`);								
   };								
 								
   const refreshToken = async () => {								

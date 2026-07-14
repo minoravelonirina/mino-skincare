@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import prisma from '@/lib/prisma'
+import { getLocaleFromPath } from 'intlayer'
 
 interface CartItem {
   id: number
@@ -22,6 +23,7 @@ function formatPrice(price: number) {
 }
 
 export default async function CartPage() {
+  const locale = getLocaleFromPath()
   const cartItems = await prisma.cartItem.findMany({
     where: { userId: 1 },
     include: {
@@ -40,7 +42,7 @@ export default async function CartPage() {
             <p className="mt-2 text-sm text-[#555]">Revoyez les articles sélectionnés avant de passer à la caisse.</p>
           </div>
           <Link
-            href="/catalogue"
+            href={`/${locale}/catalogue`}
             className="inline-flex items-center justify-center rounded-full border border-[#d8d4ca] bg-white px-5 py-3 text-sm font-semibold text-[#2d5a3d] transition hover:bg-[#eef3e8]"
           >
             Continuer mes achats
@@ -52,7 +54,7 @@ export default async function CartPage() {
             <p className="text-lg font-semibold text-[#1a1a1a]">Votre panier est vide</p>
             <p className="mt-3 text-sm text-[#555]">Ajoutez des produits depuis la boutique pour finaliser votre commande.</p>
             <Link
-              href="/catalogue"
+              href={`/${locale}/catalogue`}
               className="mt-6 inline-flex rounded-full bg-[#2d5a3d] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#23472e]"
             >
               Voir le catalogue
@@ -99,7 +101,7 @@ export default async function CartPage() {
                   <span className="float-right">{formatPrice(total + 12000 + Math.round(total * 0.1))}</span>
                 </div>
                 <Link
-                  href="/checkout"
+                  href={`/${locale}/checkout`}
                   className="block rounded-3xl bg-[#2d5a3d] px-6 py-3 text-center text-sm font-semibold text-white transition hover:bg-[#23472e]"
                 >
                   Passer à la caisse

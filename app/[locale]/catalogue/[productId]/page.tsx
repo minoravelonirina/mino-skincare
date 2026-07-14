@@ -1,7 +1,8 @@
 import prisma from '@/lib/prisma'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import AddToCartForm from '../../components/AddToCartForm'
+import AddToCartForm from '../../../components/AddToCartForm'
+import { getLocaleFromPath } from 'intlayer'
 
 interface ProductPageProps {
   params: {
@@ -10,7 +11,11 @@ interface ProductPageProps {
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
-  const id = parseInt(params.productId, 10)
+  await params;
+  const locale = getLocaleFromPath()
+  const id = parseInt( params.productId, 10)
+  console.log(id);
+  
   if (!Number.isInteger(id) || id <= 0) {
     // invalid id provided in URL, treat as 404
     return notFound()
@@ -45,11 +50,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
   }).format(product.price)
 
   return (
-    <main className="bg-[#FAFAF7] text-[#1a1a1a] antialiased">
+    <main className="bg[#FAFAF7] bg-[#fde8e8]/95 text-[#1a1a1a] antialiased">
       <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <Link href="/catalogue" className="text-sm text-[#555] transition hover:text-[#2d5a3d]">
+            <Link href={`/${locale}/catalogue`} className="text-sm text-[#555] transition hover:text-[#2d5a3d]">
               ← Retour au catalogue
             </Link>
             <h1 className="mt-3 text-3xl font-serif text-[#1a1a1a]">{product.name}</h1>
@@ -94,7 +99,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
               </div>
               <div>
                 <h2 className="mb-2 text-lg font-semibold text-[#1a1a1a]">Conseils d’utilisation</h2>
-                <p>{product.usage || 'Mode d’utilisation à découvrir.'}</p>
+                <p>{product.usage || 'Mode d\’utilisation à découvrir.'}</p>
               </div>
             </div>
           </div>

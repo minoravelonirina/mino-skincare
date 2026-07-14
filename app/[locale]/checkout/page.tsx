@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import prisma from '@/lib/prisma'
-import CheckoutForm, { CartItemData } from '../../app/components/CheckoutForm'
+import CheckoutForm from '../../components/CheckoutForm'
+import { CartItemData } from '@/lib/types'
+import { getLocaleFromPath } from 'intlayer'
 
 function formatPrice(price: number) {
   return new Intl.NumberFormat('fr-FR', {
@@ -12,6 +14,7 @@ function formatPrice(price: number) {
 }
 
 export default async function CheckoutPage() {
+  const locale = getLocaleFromPath()
   const cartItems = await prisma.cartItem.findMany({
     where: { userId: 1 },
     include: {
@@ -43,7 +46,7 @@ export default async function CheckoutPage() {
             <p className="mt-2 text-sm text-[#555]">Complétez vos informations pour confirmer l’achat.</p>
           </div>
           <Link
-            href="/cart"
+            href={`/${locale}/cart`}
             className="inline-flex items-center justify-center rounded-full border border-[#d8d4ca] bg-white px-5 py-3 text-sm font-semibold text-[#2d5a3d] transition hover:bg-[#eef3e8]"
           >
             Retour au panier

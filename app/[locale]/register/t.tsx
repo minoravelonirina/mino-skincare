@@ -2,9 +2,12 @@
 																									
 import { useState } from 'react';																									
 import { useRouter } from 'next/navigation';																									
-import Link from 'next/link';																									
+import Link from 'next/link';
+import { getLocaleFromPath } from 'intlayer';		
+import BG from "@/public/bg-login.png"																					
 																									
-export default function RegisterPage() {																									
+export default function RegisterPage() {		
+  const locale = getLocaleFromPath()																							
   const router = useRouter();																									
   const [formData, setFormData] = useState({																									
     firstname: '',
@@ -55,7 +58,7 @@ export default function RegisterPage() {
   };																									
 																									
   return (																									
-    <div className="min-h-screen flex items-center justify-center bg-[#FAFAF7] py-12 px-4 sm:px-6 lg:px-8">																									
+    <div className={`min-h-screen flex items-center justify-center bg-[${BG}] py-12 px-4 sm:px-6 lg:px-8`}>																									
       <div className="max-w-md w-full space-y-8">																									
         <div className="text-center">																									
           <div className="font-serif text-2xl font-semibold text-[#2d5a3d] mb-2">																									
@@ -155,12 +158,12 @@ export default function RegisterPage() {
               disabled={loading}																									
               className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-semibold rounded-lg text-white bg-[#2d5a3d] hover:bg-[#23472e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2d5a3d] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"																									
             >																									
-              {loading ? 'Création du compte...' : 'S&apos;inscrire'}																									
+              {loading ? 'Création du compte...' : "S'\inscrire"}																									
             </button>																									
 
             <div className="text-sm text-center">																									
-              <Link href="/login" className="font-medium text-[#2d5a3d] hover:text-[#23472e] transition-colors">											
-                Déjà un compte ? Se connecter											
+              <Link href={`/${locale}/login`} className="font-medium text-[#2d5a3d] hover:text-[#23472e] transition-colors">											
+                Déjà un compte ? 	<span className='font-bold'>Se connecter</span>										
               </Link>											
             </div>											
           </form>											

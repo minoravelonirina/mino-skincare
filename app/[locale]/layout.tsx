@@ -11,9 +11,10 @@ const LocaleLayout: NextLayoutIntlayer = async ({ children, params }) => {
   const { locale } = await params;
   return (
     <IntlayerClientProvider locale={locale}>
-      <html lang={locale} dir={getHTMLTextDir(locale)}>
+      {/* <html lang={locale} dir={getHTMLTextDir(locale)}>
         <body>{children}</body>
-      </html>
+      </html> */}
+      {children}
     </IntlayerClientProvider>
   );
 };

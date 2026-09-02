@@ -73,15 +73,18 @@ export default function DashboardPage() {
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">																	
         <div className="px-4 py-6 sm:px-0">																	
           <div className="bg-white shadow rounded-lg p-6 mb-6">																	
-            <h2 className="text-2xl font-bold mb-4">Welcome, {userData?.firstname}!</h2>																	
+            <h2 className="text-2xl font-bold mb-4">Welcome, {userData?.email}!</h2>
             <div className="space-y-2">																	
               <p className="text-gray-600">																	
                 <span className="font-semibold">Email:</span> {userData?.email}																	
               </p>																	
               <p className="text-gray-600">																	
                 <span className="font-semibold">User ID:</span> {userData?.userId}																	
+              </p>
+              <p className="text-gray-600">																	
+                <span className="font-semibold">Role:</span> {userData?.role}																	
               </p>																	
-            </div>																	
+            </div>
           </div>																	
 																	
           <div className="bg-white shadow rounded-lg p-6">																	

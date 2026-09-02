@@ -2,16 +2,11 @@
 								
 import { useState, useEffect } from 'react';								
 import { useRouter } from 'next/navigation';	
-import { getLocaleFromPath } from 'intlayer';							
-								
-interface User {								
-  userId: string;								
-  email: string;								
-  name: string;								
-}								
+import { getLocaleFromPath } from 'intlayer';	
+import type { UserData } from './types';							
 								
 export function useAuth() {								
-  const [user, setUser] = useState<User | null>(null);								
+  const [user, setUser] = useState<UserData | null>(null);								
   const [loading, setLoading] = useState(true);								
   const router = useRouter();		
   const locale = getLocaleFromPath()						

@@ -1,9 +1,16 @@
+import fs from "node:fs";
+import path from "node:path";
 import prisma from "@/lib/prisma";
 import Image from "next/image";
 import Link from "next/link";
 import { getLocaleFromPath } from "intlayer";
 import { CataloguePageProps, Product, Category} from "@/lib/types"
 import Header from "@/app/components/home/Header";
+
+function pathExists(src: string): boolean {
+  const filePath = path.join(process.cwd(), "public", src);
+  return fs.existsSync(filePath);
+}
 
 async function getProducts(search?: string, category?: string) {
   const where: any = {
@@ -58,16 +65,34 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
     getCategories(),
   ]);
 
-  const getProductImage = (product: Product) => {
+  const getProductImage = (product: Product): string => {
+    let candidate: string | null = null;
     if (product.images) {
       try {
         const images = JSON.parse(product.images);
-        return images[0] || '/placeholder-product.jpg';
+        const pick = Array.isArray(images) ? images[0] : images;
+        if (typeof pick === "string") candidate = pick;
+        else if (pick && typeof pick.url === "string") candidate = pick.url;
       } catch {
-        return '/placeholder-product.jpg';
+        candidate = null;
       }
     }
-    return '/placeholder-product.jpg';
+    return isValidImage(candidate) ? candidate : "/placeholder-product.jpg";
+  };
+
+  const isValidImage = (src: string | null): src is string => {
+    if (!src || typeof src !== "string") return false;
+    const s = src.trim();
+    if (!s) return false;
+    if (s.startsWith("http://") || s.startsWith("https://") || s.startsWith("data:")) return true;
+    if (s.startsWith("/")) {
+      try {
+        return pathExists(s);
+      } catch {
+        return false;
+      }
+    }
+    return false;
   };
 
   const formatPrice = (price: number) => {

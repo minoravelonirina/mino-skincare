@@ -9,10 +9,6 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
 
-    const salt= await bcrypt.genSalt(12);
-    console.log(salt);
-    const hashedPassword = await bcrypt.hash(body.password, salt);
-
     if (!body.email || !body.password) {
       return errorResponse('email et password sont requis', 400)
     }
@@ -32,12 +28,14 @@ export async function POST(request: NextRequest) {
       return errorResponse('Un utilisateur avec cet email existe déjà', 400)
     }
 
+    const hashedPassword = await bcrypt.hash(body.password, 12);
+
     const user = await prisma.user.create({
       data: {
         email: body.email,
         password: hashedPassword,
-        firstName: body.firstname || null,
-        lastName: body.lastname || null,
+        firstName: body.firstName || null,
+        lastName: body.lastName || null,
         phone: body.phone || null,
         role: 'CUSTOMER',
       },

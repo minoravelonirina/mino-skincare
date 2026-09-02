@@ -1,21 +1,22 @@
 import type { JWTPayload as JoseJWTPayload } from "jose";
 
+export type UserRole = "CUSTOMER" | "ADMIN";
+
 export interface User {
     id: number;
     email: string;
-    firstname: string;
-    lastname: string;
+    firstName: string | null;
+    lastName: string | null;
     password?: string;
-    phone?: string;
-    role?: string;
+    phone?: string | null;
+    role: UserRole;
     createdAt: Date;
-    
 }
 
 export interface JWTPayload extends JoseJWTPayload {
     userId: number;
     email: string;
-    role: string;
+    role: UserRole;
 }
 
 export interface LoginCredentials {
@@ -24,12 +25,12 @@ export interface LoginCredentials {
 }
 
 export interface RegisterData {
-    firstname: string;
-    lastname: string;
+    firstName: string;
+    lastName: string;
     email: string;
     password: string;
     confirmPassword: string;
-    phone: string
+    phone?: string;
 }
 
 export interface AuthResponse {
@@ -61,11 +62,10 @@ export interface AddToCartFormProps {
 }
 
 export interface UserData {																	
-  userId: string;																	
+  userId: number;																	
   email: string;																	
-  firstname: string;
-  lastname: string																	
-}	
+  role: UserRole;																	
+}
 
 export interface CataloguePageProps {
   searchParams: Promise<{

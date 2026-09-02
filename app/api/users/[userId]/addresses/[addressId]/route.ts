@@ -1,15 +1,26 @@
 import { NextRequest } from 'next/server'
 import prisma from '@/lib/prisma'
 import { successResponse, errorResponse, notFoundResponse, forbiddenResponse } from '@/app/api/utils/responses'
+import { requireAuth } from '@/lib/auth'
 
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ userId: string; addressId: string }> }
 ) {
   try {
+    const authUser = await requireAuth(request)
+    if (!authUser) {
+      return errorResponse('Non authentifié', 401)
+    }
+
     const { userId, addressId } = await params
     const userId_id = parseInt(userId)
     const id = parseInt(addressId)
+
+    if (authUser.userId !== userId_id && authUser.role !== 'ADMIN') {
+      return forbiddenResponse()
+    }
+
     const body = await request.json()
 
     const address = await prisma.address.findUnique({
@@ -57,9 +68,18 @@ export async function DELETE(
   { params }: { params: Promise<{ userId: string; addressId: string }> }
 ) {
   try {
+    const authUser = await requireAuth(request)
+    if (!authUser) {
+      return errorResponse('Non authentifié', 401)
+    }
+
     const { userId, addressId } = await params
     const userId_id = parseInt(userId)
     const id = parseInt(addressId)
+
+    if (authUser.userId !== userId_id && authUser.role !== 'ADMIN') {
+      return forbiddenResponse()
+    }
 
     const address = await prisma.address.findUnique({
       where: { id },

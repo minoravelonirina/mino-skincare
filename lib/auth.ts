@@ -48,7 +48,7 @@ export async function verifyRefreshToken(token: string): Promise<JWTPayload | nu
 }
 
 export function getTokenFromHeaders(request: NextRequest): string | null {
-    const authHeader = request.headers.get('authorisation');
+    const authHeader = request.headers.get('authorization');
     if (authHeader && authHeader.startsWith('Bearer ')){
         return authHeader.substring(7);
     }
@@ -87,6 +87,23 @@ export async function clearAuthCookies() {
     const cookieStore = await cookies();
     cookieStore.delete('accessToken');
     cookieStore.delete('refreshToken');
+}
+
+export async function getCurrentUserFromCookies(): Promise<JWTPayload | null> {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('accessToken')?.value;
+    if (!token) return null;
+    return await verifyAccessToken(token);
+}
+
+export async function requireAuth(request: NextRequest): Promise<JWTPayload | null> {
+    return getCurrentUser(request);
+}
+
+export async function requireAdmin(request: NextRequest): Promise<JWTPayload | null> {
+    const user = await getCurrentUser(request);
+    if (!user || user.role !== 'ADMIN') return null;
+    return user;
 }
 
 

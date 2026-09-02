@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server'
 import prisma from '@/lib/prisma'
 import { successResponse, errorResponse, notFoundResponse } from '@/app/api/utils/responses'
+import { requireAdmin } from '@/lib/auth'
 
 export async function GET(
   request: NextRequest,
@@ -44,6 +45,11 @@ export async function PATCH(
   { params }: { params: Promise<{ productId: string }> }
 ) {
   try {
+    const user = await requireAdmin(request)
+    if (!user) {
+      return errorResponse('Non autorisé', 403)
+    }
+
     const { productId } = await params
     const id = parseInt(productId)
     const body = await request.json()
@@ -108,6 +114,11 @@ export async function DELETE(
   { params }: { params: Promise<{ productId: string }> }
 ) {
   try {
+    const user = await requireAdmin(request)
+    if (!user) {
+      return errorResponse('Non autorisé', 403)
+    }
+
     const { productId } = await params
     const id = parseInt(productId)
 

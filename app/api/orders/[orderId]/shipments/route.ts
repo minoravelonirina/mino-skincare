@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server'
 import prisma from '@/lib/prisma'
-import { successResponse, errorResponse, notFoundResponse } from '@/app/api/utils/responses'
+import { successResponse, errorResponse, notFoundResponse, forbiddenResponse } from '@/app/api/utils/responses'
+import { requireAuth, requireAdmin } from '@/lib/auth'
 
 // GET all shipments for an order
 export async function GET(
@@ -8,6 +9,11 @@ export async function GET(
   { params }: { params: Promise<{ orderId: string }> }
 ) {
   try {
+    const user = await requireAuth(request)
+    if (!user) {
+      return errorResponse('Non authentifié', 401)
+    }
+
     const { orderId } = await params
     const id = parseInt(orderId)
 
@@ -17,6 +23,10 @@ export async function GET(
 
     if (!order) {
       return notFoundResponse('Commande')
+    }
+
+    if (order.userId !== user.userId && user.role !== 'ADMIN') {
+      return forbiddenResponse()
     }
 
     const shipments = await prisma.shipment.findMany({
@@ -39,6 +49,11 @@ export async function POST(
   { params }: { params: Promise<{ orderId: string }> }
 ) {
   try {
+    const user = await requireAdmin(request)
+    if (!user) {
+      return errorResponse('Non autorisé', 403)
+    }
+
     const { orderId } = await params
     const id = parseInt(orderId)
     const body = await request.json()

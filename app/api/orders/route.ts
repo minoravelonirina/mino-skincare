@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server'
 import prisma from '@/lib/prisma'
 import { successResponse, errorResponse } from '@/app/api/utils/responses'
+import { getCurrentUserFromCookies } from '@/lib/auth'
 
 // Générer un numéro de commande unique
 export async function generateOrderNumber(): Promise<string> {
@@ -14,13 +15,13 @@ export async function generateOrderNumber(): Promise<string> {
 
 export async function GET(request: NextRequest) {
   try {
-    const url = new URL(request.url)
-    const userId = url.searchParams.get('userId')
-
-    const where = userId ? { userId: parseInt(userId) } : {}
+    const user = await getCurrentUserFromCookies()
+    if (!user) {
+      return errorResponse('Non authentifié', 401)
+    }
 
     const orders = await prisma.order.findMany({
-      where,
+      where: { userId: user.userId },
       include: {
         orderItems: {
           include: {
@@ -43,11 +44,16 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const user = await getCurrentUserFromCookies()
+    if (!user) {
+      return errorResponse('Non authentifié', 401)
+    }
+
     const body = await request.json()
 
-    if (!body.userId || !body.orderItems || body.orderItems.length === 0) {
+    if (!body.orderItems || body.orderItems.length === 0) {
       return errorResponse(
-        'userId et orderItems (non vide) sont requis',
+        'orderItems (non vide) est requis',
         400
       )
     }
@@ -66,7 +72,7 @@ export async function POST(request: NextRequest) {
 
     const order = await prisma.order.create({
       data: {
-        userId: body.userId,
+        userId: user.userId,
         orderNumber,
         status: 'PENDING',
         totalAmount:
@@ -97,7 +103,7 @@ export async function POST(request: NextRequest) {
 
     // Nettoyer le panier après la création de la commande
     await prisma.cartItem.deleteMany({
-      where: { userId: body.userId },
+      where: { userId: user.userId },
     })
 
     return successResponse(order, 201)

@@ -3,6 +3,8 @@ import prisma from '@/lib/prisma'
 import CheckoutForm from '../../components/CheckoutForm'
 import { CartItemData } from '@/lib/types'
 import { getLocaleFromPath } from 'intlayer'
+import { getCurrentUserFromCookies } from '@/lib/auth'
+import { redirect } from 'next/navigation'
 
 function formatPrice(price: number) {
   return new Intl.NumberFormat('fr-FR', {
@@ -15,8 +17,10 @@ function formatPrice(price: number) {
 
 export default async function CheckoutPage() {
   const locale = getLocaleFromPath()
+  const user = await getCurrentUserFromCookies()
+  if (!user) redirect(`/${locale}/login`)
   const cartItems = await prisma.cartItem.findMany({
-    where: { userId: 1 },
+    where: { userId: user.userId },
     include: {
       product: true,
     },

@@ -1,12 +1,18 @@
 import { NextRequest } from 'next/server'
 import prisma from '@/lib/prisma'
-import { successResponse, errorResponse, notFoundResponse } from '@/app/api/utils/responses'
+import { successResponse, errorResponse, notFoundResponse, forbiddenResponse } from '@/app/api/utils/responses'
+import { requireAuth } from '@/lib/auth'
 
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ cartItemId: string }> }
 ) {
   try {
+    const user = await requireAuth(request)
+    if (!user) {
+      return errorResponse('Non authentifié', 401)
+    }
+
     const { cartItemId } = await params
     const id = parseInt(cartItemId)
     const body = await request.json()
@@ -17,6 +23,10 @@ export async function PATCH(
 
     if (!cartItem) {
       return notFoundResponse('Article du panier')
+    }
+
+    if (cartItem.userId !== user.userId) {
+      return forbiddenResponse()
     }
 
     const updatedItem = await prisma.cartItem.update({
@@ -40,6 +50,11 @@ export async function DELETE(
   { params }: { params: Promise<{ cartItemId: string }> }
 ) {
   try {
+    const user = await requireAuth(request)
+    if (!user) {
+      return errorResponse('Non authentifié', 401)
+    }
+
     const { cartItemId } = await params
     const id = parseInt(cartItemId)
 
@@ -49,6 +64,10 @@ export async function DELETE(
 
     if (!cartItem) {
       return notFoundResponse('Article du panier')
+    }
+
+    if (cartItem.userId !== user.userId) {
+      return forbiddenResponse()
     }
 
     await prisma.cartItem.delete({

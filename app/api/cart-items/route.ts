@@ -1,18 +1,17 @@
 import { NextRequest } from 'next/server'
 import prisma from '@/lib/prisma'
 import { successResponse, errorResponse } from '@/app/api/utils/responses'
+import { getCurrentUserFromCookies } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
   try {
-    const url = new URL(request.url)
-    const userId = url.searchParams.get('userId')
-
-    if (!userId) {
-      return errorResponse('userId est requis', 400)
+    const user = await getCurrentUserFromCookies()
+    if (!user) {
+      return errorResponse('Non authentifié', 401)
     }
 
     const cartItems = await prisma.cartItem.findMany({
-      where: { userId: parseInt(userId) },
+      where: { userId: user.userId },
       include: {
         product: true,
       },
@@ -26,10 +25,15 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const user = await getCurrentUserFromCookies()
+    if (!user) {
+      return errorResponse('Non authentifié', 401)
+    }
+
     const body = await request.json()
 
-    if (!body.userId || !body.productId || !body.quantity) {
-      return errorResponse('userId, productId et quantity sont requis', 400)
+    if (!body.productId || !body.quantity) {
+      return errorResponse('productId et quantity sont requis', 400)
     }
 
     // Vérifier que le produit existe
@@ -45,7 +49,7 @@ export async function POST(request: NextRequest) {
     const existingItem = await prisma.cartItem.findUnique({
       where: {
         userId_productId: {
-          userId: body.userId,
+          userId: user.userId,
           productId: body.productId,
         },
       },
@@ -57,7 +61,7 @@ export async function POST(request: NextRequest) {
       cartItem = await prisma.cartItem.update({
         where: {
           userId_productId: {
-            userId: body.userId,
+            userId: user.userId,
             productId: body.productId,
           },
         },
@@ -72,7 +76,7 @@ export async function POST(request: NextRequest) {
       // Créer un nouvel item
       cartItem = await prisma.cartItem.create({
         data: {
-          userId: body.userId,
+          userId: user.userId,
           productId: body.productId,
           quantity: body.quantity,
         },

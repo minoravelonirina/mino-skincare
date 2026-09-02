@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server'
 import prisma from '@/lib/prisma'
 import { successResponse, errorResponse, notFoundResponse } from '@/app/api/utils/responses'
 import { getProductFilters } from '@/app/api/utils/validation'
+import { requireAdmin } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
   try {
@@ -101,6 +102,11 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const user = await requireAdmin(request)
+    if (!user) {
+      return errorResponse('Non autorisé', 403)
+    }
+
     const body = await request.json()
 
     // Valider les champs requis

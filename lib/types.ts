@@ -15,6 +15,7 @@ export interface User {
 export interface JWTPayload extends JoseJWTPayload {
     userId: number;
     email: string;
+    role: string;
 }
 
 export interface LoginCredentials {

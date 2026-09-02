@@ -19,11 +19,13 @@ export async function POST(request: NextRequest) {
         const newAccessToken = await generateAccessToken({
             userId: payload.userId,
             email: payload.email,
+            role: payload.role,
         });
 
         const newRefreshToken = await generateRefreshToken({
             userId: payload.userId,
-            email: payload.email
+            email: payload.email,
+            role: payload.role,
         });
 
         await setAuthCookies(newAccessToken, newRefreshToken);

@@ -1,21 +1,31 @@
 import { NextRequest } from 'next/server'
 import prisma from '@/lib/prisma'
-import { successResponse, errorResponse, notFoundResponse } from '@/app/api/utils/responses'
+import { successResponse, errorResponse, notFoundResponse, forbiddenResponse } from '@/app/api/utils/responses'
+import { requireAuth } from '@/lib/auth'
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
+    const user = await requireAuth(request)
+    if (!user) {
+      return errorResponse('Non authentifié', 401)
+    }
+
     const { userId } = await params
     const id = parseInt(userId)
 
+    if (user.userId !== id && user.role !== 'ADMIN') {
+      return forbiddenResponse()
+    }
+
     // Vérifier que l'utilisateur existe
-    const user = await prisma.user.findUnique({
+    const dbUser = await prisma.user.findUnique({
       where: { id },
     })
 
-    if (!user) {
+    if (!dbUser) {
       return notFoundResponse('Utilisateur')
     }
 
@@ -34,8 +44,18 @@ export async function POST(
   { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
+    const authUser = await requireAuth(request)
+    if (!authUser) {
+      return errorResponse('Non authentifié', 401)
+    }
+
     const { userId } = await params
     const id = parseInt(userId)
+
+    if (authUser.userId !== id) {
+      return forbiddenResponse()
+    }
+
     const body = await request.json()
 
     if (!body.type || !body.street || !body.city || !body.postalCode || !body.country) {

@@ -1,12 +1,18 @@
 import { NextRequest } from 'next/server'
 import prisma from '@/lib/prisma'
-import { successResponse, errorResponse, notFoundResponse } from '@/app/api/utils/responses'
+import { successResponse, errorResponse, notFoundResponse, forbiddenResponse } from '@/app/api/utils/responses'
+import { requireAuth, requireAdmin } from '@/lib/auth'
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ orderId: string }> }
 ) {
   try {
+    const user = await requireAuth(request)
+    if (!user) {
+      return errorResponse('Non authentifié', 401)
+    }
+
     const { orderId } = await params
     const id = parseInt(orderId)
 
@@ -35,6 +41,10 @@ export async function GET(
       return notFoundResponse('Commande')
     }
 
+    if (order.userId !== user.userId && user.role !== 'ADMIN') {
+      return forbiddenResponse()
+    }
+
     return successResponse(order)
   } catch (error) {
     return errorResponse(error as Error)
@@ -46,6 +56,11 @@ export async function PATCH(
   { params }: { params: Promise<{ orderId: string }> }
 ) {
   try {
+    const user = await requireAdmin(request)
+    if (!user) {
+      return errorResponse('Non autorisé', 403)
+    }
+
     const { orderId } = await params
     const id = parseInt(orderId)
     const body = await request.json()

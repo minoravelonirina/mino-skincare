@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import prisma from '@/lib/prisma'
 import { getLocaleFromPath } from 'intlayer'
+import { getCurrentUserFromCookies } from '@/lib/auth'
+import { redirect } from 'next/navigation'
 
 interface CartItem {
   id: number
@@ -24,8 +26,10 @@ function formatPrice(price: number) {
 
 export default async function CartPage() {
   const locale = getLocaleFromPath()
+  const user = await getCurrentUserFromCookies()
+  if (!user) redirect(`/${locale}/login`)
   const cartItems = await prisma.cartItem.findMany({
-    where: { userId: 1 },
+    where: { userId: user.userId },
     include: {
       product: true,
     },

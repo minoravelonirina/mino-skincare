@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server'
 import prisma from '@/lib/prisma'
 import { successResponse, errorResponse, notFoundResponse } from '@/app/api/utils/responses'
+import { getCurrentUserFromCookies } from '@/lib/auth'
 
 export async function GET(
   request: NextRequest,
@@ -50,8 +51,13 @@ export async function POST(
     const id = parseInt(productId)
     const body = await request.json()
 
-    if (!body.userId || !body.rating) {
-      return errorResponse('userId et rating sont requis', 400)
+    const user = await getCurrentUserFromCookies()
+    if (!user) {
+      return errorResponse('Non authentifié', 401)
+    }
+
+    if (!body.rating) {
+      return errorResponse('rating est requis', 400)
     }
 
     if (body.rating < 1 || body.rating > 5) {
@@ -68,17 +74,17 @@ export async function POST(
     }
 
     // Vérifier que l'utilisateur existe
-    const user = await prisma.user.findUnique({
-      where: { id: body.userId },
+    const dbUser = await prisma.user.findUnique({
+      where: { id: user.userId },
     })
 
-    if (!user) {
+    if (!dbUser) {
       return errorResponse('Utilisateur non trouvé', 404)
     }
 
     const review = await prisma.review.create({
       data: {
-        userId: body.userId,
+        userId: user.userId,
         productId: parseInt(productId),
         rating: body.rating,
         title: body.title,

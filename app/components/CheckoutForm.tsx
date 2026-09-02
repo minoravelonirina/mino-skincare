@@ -44,7 +44,6 @@ export default function CheckoutForm({ cartItems, totalAmount }: CheckoutFormPro
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userId: 1,
           orderItems,
           billingAddress: {
             fullName: formData.fullName,

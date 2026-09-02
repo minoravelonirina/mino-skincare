@@ -19,7 +19,6 @@ export default function AddToCartForm({ productId }: AddToCartFormProps) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userId: 1,
           productId,
           quantity,
         }),

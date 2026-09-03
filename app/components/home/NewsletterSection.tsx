@@ -5,21 +5,44 @@ export default function NewsletterSection({ content }: { content: any }) {
   const submit = content.submit ?? content.cta ?? "Subscribe";
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16 ">
-      <div className="rounded-4xl bg-[#fde8e8] px-6 py-10 sm:px-10 sm:py-14">
-        <div className="grid gap-8 lg:grid-cols-[1.3fr_0.7fr] lg:items-center">
-          <div>
-            <h2 className="font-serif text-3xl text-[#1a1a1a]">{title}</h2>
-            <p className="mt-3 max-w-2xl text-sm leading-7 text-[#555] sm:text-base">{description}</p>
+    <section className="relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-[#f8f6f3] via-white to-[#f8f6f3]" />
+      
+      <div className="relative mx-auto max-w-7xl px-5 py-20 sm:px-6 sm:py-28 lg:px-8">
+        <div className="relative overflow-hidden rounded-[2rem] bg-[#2d5a3d] px-8 py-14 sm:px-14 sm:py-20">
+          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[#8BAF7C]/20 blur-3xl" />
+          <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-[#8BAF7C]/10 blur-3xl" />
+          
+          <div className="relative grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-center">
+            <div>
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-[12px] font-medium text-white/80 backdrop-blur-sm">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#8BAF7C]" />
+                Newsletter
+              </span>
+              <h2 className="mt-6 font-serif text-[32px] leading-tight text-white sm:text-[40px]">
+                {title}
+              </h2>
+              <p className="mt-4 max-w-lg text-[15px] leading-relaxed text-white/70">
+                {description}
+              </p>
+            </div>
+            
+            <div className="relative">
+              <form className="relative flex flex-col gap-3 rounded-2xl bg-white/10 p-3 backdrop-blur-md sm:flex-row">
+                <input
+                  type="email"
+                  placeholder={placeholder}
+                  className="flex-1 rounded-xl bg-white/95 px-5 py-4 text-[14px] text-[#1a1a1a] placeholder:text-[#999] outline-none transition-all duration-300 focus:ring-2 focus:ring-[#8BAF7C]/50"
+                />
+                <button className="rounded-xl bg-[#1e3d2a] px-8 py-4 text-[14px] font-medium text-white transition-all duration-300 hover:bg-[#153020] hover:shadow-lg hover:shadow-[#1e3d2a]/30">
+                  {submit}
+                </button>
+              </form>
+              <p className="mt-4 text-center text-[12px] text-white/50">
+                No spam, unsubscribe at any time.
+              </p>
+            </div>
           </div>
-          <form className="flex flex-col gap-3 rounded-3xl bg-white p-4 shadow-sm sm:flex-row sm:items-center">
-            <input
-              type="email"
-              placeholder={placeholder}
-              className="flex-1 rounded-3xl border border-[#c8deb4] bg-white px-4 py-3 text-sm text-[#1a1a1a] outline-none focus:border-[#2d5a3d] focus:ring-2 focus:ring-[#c8deb4]"
-            />
-            <button className="rounded-3xl bg-[#2d5a3d] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#23472e]">{submit}</button>
-          </form>
         </div>
       </div>
     </section>

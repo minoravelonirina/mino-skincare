@@ -1,6 +1,5 @@
 import { getIntlayer } from "next-intlayer";
 import { getLocale } from "next-intlayer/server";
-import Footer from "../components/Footer";
 
 import {
   getCategories,
@@ -9,7 +8,6 @@ import {
   getReviews,
 } from "@/lib/home";
 
-import Header from "../components/home/Header";
 import HeroSection from "../components/home/HeroSection";
 import PromiseBar from "../components/home/PromiseBar";
 import CategoriesSection from "../components/home/CategoriesSection";
@@ -39,7 +37,6 @@ export default async function Home() {
 
     return (
       <main className="bg-[#fde8e8] text-[#1a1a1a] antialiased">
-        <Header content={content.navigation} />
         <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="rounded-2xl border border-[#f1c5c5] bg-white p-8 shadow-sm">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#b45b5b]">
@@ -80,22 +77,19 @@ export default async function Home() {
             </pre>
           </div>
         </div>
-        <Footer />
       </main>
     );
   }
 
   return (
     <main className="bg-[#fde8e8] text-[#1a1a1a] antialiased">
-      <Header content={content.navigation} />
       <HeroSection content={content.hero} />
       <PromiseBar content={content.promises} />
       <CategoriesSection categories={categories} content={content.categories} />
       <FeaturedProductsSection products={featuredProducts} content={content.featuredProducts} />
-      <MoreProductsSection products={otherProducts} saleBadge={content.featuredProducts.saleBadge} />
+      <MoreProductsSection products={otherProducts} content={content.moreProducts} saleBadge={content.featuredProducts.saleBadge} />
       <TestimonialsSection reviews={reviews} content={content.testimonials} />
       <NewsletterSection content={content.newsletter} />
-      <Footer />
     </main>
   );
 }

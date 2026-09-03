@@ -3,17 +3,6 @@ import { type Dictionary, t } from "intlayer";
 const pageContent = {
   key: "page",
   content: {
-    navigation: {
-      siteTitle: t({ en: "Mino Skincare", fr: "Mino Skincare" }),
-      home: t({ en: "Home", fr: "Accueil" }),
-      showcase: t({ en: "Showcase", fr: "Vitrine" }),
-      catalogue: t({ en: "Shop", fr: "Boutique" }),
-      categories: t({ en: "Categories", fr: "Catégories" }),
-      reviews: t({ en: "Reviews", fr: "Avis" }),
-      login: t({ en: "Login", fr: "Connexion" }),
-      cart: t({ en: "Cart", fr: "Panier" }),
-    },
-
     hero: {
       eyebrow: t({ en: "Mino Skincare", fr: "Mino Skincare" }),
       titleStart: t({
@@ -71,6 +60,19 @@ const pageContent = {
       }),
       seeAll: t({ en: "See all products", fr: "Voir tous les produits" }),
       saleBadge: t({ en: "-20%", fr: "-20%" }),
+      viewDetails: t({ en: "View Details", fr: "Voir les détails" }),
+      inStock: t({ en: "In stock", fr: "En stock" }),
+      outOfStock: t({ en: "Out of stock", fr: "Rupture de stock" }),
+    },
+
+    moreProducts: {
+      title: t({ en: "Discover more", fr: "Découvrez davantage" }),
+      heading: t({ en: "Discover more", fr: "Découvrez davantage" }),
+      description: t({
+        en: "Explore additional products curated for your routine.",
+        fr: "Explorez d'autres produits sélectionnés pour votre routine.",
+      }),
+      viewDetails: t({ en: "View Details", fr: "Voir les détails" }),
     },
 
     testimonials: {
@@ -80,6 +82,7 @@ const pageContent = {
         en: "Real feedback from clients who trust Mino for their daily skincare ritual.",
         fr: "Des retours authentiques de clientes qui font confiance à Mino pour leur rituel de soin quotidien.",
       }),
+      about: t({ en: "about", fr: "à propos de" }),
     },
 
     newsletter: {

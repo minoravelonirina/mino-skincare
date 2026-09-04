@@ -1,23 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
-import { getCategoryVisual, formatPrice } from "@/lib/home";
+import { getCategoryVisual, formatPrice, getProductImage, placeholderProductImage } from "@/lib/home";
 import { getLocaleFromPath } from "intlayer";
 export default async function ProductCard({ product, saleBadge, showCompareAtPrice = false, variant = "default", viewDetails, inStock, outOfStock }: any) {
   const locale = await getLocaleFromPath()
   const visual = getCategoryVisual(product.category?.name);
   const isCompact = variant === "compact";
 
-  let imageUrl: string | null = null;
-  try {
-    if (product.images) {
-      const imgs = JSON.parse(product.images);
-      const pick = Array.isArray(imgs) ? imgs[0] : imgs;
-      if (typeof pick === "string") imageUrl = pick.startsWith("/") ? pick : `/images/products/${pick}`;
-      else if (pick && typeof pick === "object" && typeof pick.url === "string") imageUrl = pick.url;
-    }
-  } catch (_) {
-    imageUrl = null;
-  }
+  const imageUrl = getProductImage(product.images) ?? placeholderProductImage;
 
   return (
     <Link href={`/${locale}/catalogue/${product.id}`}>

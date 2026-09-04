@@ -1,8 +1,10 @@
 import prisma from '@/lib/prisma'
 import Link from 'next/link'
+import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import AddToCartForm from '../../../components/AddToCartForm'
 import { getLocaleFromPath } from 'intlayer'
+import { getProductImage, placeholderProductImage } from '@/lib/home'
 
 interface ProductPageProps {
   params: {
@@ -32,17 +34,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     return notFound()
   }
 
-  const productImage = (() => {
-    if (product.images) {
-      try {
-        const images = JSON.parse(product.images)
-        return images[0] || '/placeholder-product.jpg'
-      } catch {
-        return '/placeholder-product.jpg'
-      }
-    }
-    return '/placeholder-product.jpg'
-  })()
+  const productImage = getProductImage(product.images) ?? placeholderProductImage
 
   const priceFormatted = new Intl.NumberFormat('fr-FR', {
     style: 'currency',
@@ -67,8 +59,15 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
         <div className="grid gap-8 lg:grid-cols-[1.1fr_.9fr]">
           <div className="rounded-[28px] bg-white p-6 shadow-sm">
-            <div className="mb-6 overflow-hidden rounded-[28px] bg-[#eef3e8]">
-              <div className="aspect-4/3 flex items-center justify-center text-[5rem]">{productImage === '/placeholder-product.jpg' ? '🧴' : '🖼️'}</div>
+            <div className="relative mb-6 aspect-4/3 overflow-hidden rounded-[28px] bg-[#eef3e8]">
+              <Image
+                src={productImage}
+                alt={product.name}
+                width={800}
+                height={600}
+                className="h-full w-full object-cover"
+                priority
+              />
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">

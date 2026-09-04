@@ -11,6 +11,7 @@ export default function Header({ content }: { content: any }) {
   const catalogue = content.catalogue ?? "Catalogue";
   const categories = content.categories ?? "Categories";
   const reviews = content.reviews ?? "Reviews";
+  const about = content.about ?? "About";
   const login = content.login ?? "Login";
   const cart = content.cart ?? "Cart";
 
@@ -83,7 +84,7 @@ export default function Header({ content }: { content: any }) {
             { href: `/${locale}#vitrine`, label: showcase },
             { href: `/${locale}/catalogue`, label: catalogue },
             { href: `/${locale}#categories`, label: categories },
-            { href: `/${locale}#testimonials`, label: reviews },
+            { href: `/${locale}/about`, label: about },
           ].map((item) => (
             <Link
               key={item.href}
@@ -181,7 +182,7 @@ export default function Header({ content }: { content: any }) {
               { href: `/${locale}#vitrine`, label: showcase },
               { href: `/${locale}/catalogue`, label: catalogue },
               { href: `/${locale}#categories`, label: categories },
-              { href: `/${locale}#testimonials`, label: reviews },
+              { href: `/${locale}/about`, label: about },
             ].map((item, i) => (
               <Link
                 key={item.href}

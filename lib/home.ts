@@ -86,3 +86,53 @@ export function getCategoryVisual(categoryName?: string | null) {
   const index = categoryName ? categoryIndexByName[categoryName] : undefined;
   return categoryVisuals[index ?? 0];
 }
+
+export const placeholderProductImage = "/placeholder-product.jpg";
+
+export function normalizeProductImageUrl(src: string): string {
+  const s = src.trim();
+  if (!s) return "";
+  if (
+    s.startsWith("http://") ||
+    s.startsWith("https://") ||
+    s.startsWith("data:") ||
+    s.startsWith("/")
+  ) {
+    return s;
+  }
+  return `/images/products/${s}`;
+}
+
+type ImageEntry = string | { url?: string } | null | undefined;
+
+export function getAllProductImages(images: string | null | undefined): string[] {
+  if (!images) return [];
+
+  try {
+    const parsed: unknown = JSON.parse(images);
+
+    const list = Array.isArray(parsed) ? parsed : [parsed];
+
+    const urls: string[] = [];
+    for (const entry of list as ImageEntry[]) {
+      if (!entry) continue;
+      if (typeof entry === "string") {
+        const url = normalizeProductImageUrl(entry);
+        if (url) urls.push(url);
+      } else if (typeof entry === "object" && typeof entry.url === "string") {
+        const url = normalizeProductImageUrl(entry.url);
+        if (url) urls.push(url);
+      }
+    }
+    return urls;
+  } catch {
+    return [];
+  }
+}
+
+export function getProductImage(
+  images: string | null | undefined
+): string | null {
+  const urls = getAllProductImages(images);
+  return urls[0] ?? null;
+}

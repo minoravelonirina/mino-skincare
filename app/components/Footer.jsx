@@ -26,7 +26,9 @@ export default function Footer() {
           <div>
             <div className="mb-4 text-xs uppercase tracking-[0.2em] text-white">Info</div>
             <ul className="space-y-2 text-sm text-[#999]">
-              <li>À propos</li>
+              <li>
+                <a href="/fr/about" className="transition-colors duration-300 hover:text-white">À propos</a>
+              </li>
               <li>Blog</li>
               <li>FAQ</li>
               <li>Contact</li>

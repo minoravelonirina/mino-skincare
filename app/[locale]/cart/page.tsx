@@ -1,8 +1,10 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import prisma from '@/lib/prisma'
 import { getLocaleFromPath } from 'intlayer'
 import { getCurrentUserFromCookies } from '@/lib/auth'
 import { redirect } from 'next/navigation'
+import { getProductImage, placeholderProductImage } from '@/lib/home'
 
 interface CartItem {
   id: number
@@ -70,8 +72,14 @@ export default async function CartPage() {
               {cartItems.map((item) => (
                 <div key={item.id} className="rounded-3xl bg-white p-6 shadow-sm">
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-                    <div className="flex h-28 w-28 items-center justify-center rounded-3xl bg-[#eef3e8] text-4xl">
-                      {item.product.images ? '🖼️' : '🧴'}
+                    <div className="relative flex h-28 w-28 items-center justify-center overflow-hidden rounded-3xl bg-[#eef3e8]">
+                      <Image
+                        src={getProductImage(item.product.images) ?? placeholderProductImage}
+                        alt={item.product.name}
+                        width={112}
+                        height={112}
+                        className="h-full w-full object-cover"
+                      />
                     </div>
                     <div className="flex-1">
                       <h2 className="text-base font-semibold text-[#1a1a1a]">{item.product.name}</h2>

@@ -21,6 +21,14 @@ const dashboardContent = {
     logout: t({ en: "Log out", fr: "Se déconnecter" }),
     goToShop: t({ en: "Back to the boutique", fr: "Retour à la boutique" }),
     secretUnavailable: t({ en: "No protected data available.", fr: "Aucune donnée protégée disponible." }),
+    dashboard: t({ en: "Dashboard", fr: "Tableau de bord" }),
+    navigate: t({ en: "Navigation", fr: "Navigation" }),
+    overview: t({ en: "Overview", fr: "Aperçu" }),
+    orders: t({ en: "My orders", fr: "Mes commandes" }),
+    favorites: t({ en: "Favorites", fr: "Favoris" }),
+    settings: t({ en: "Settings", fr: "Paramètres" }),
+    memberSince: t({ en: "Member since", fr: "Membre depuis" }),
+    statusOnline: t({ en: "Online", fr: "En ligne" }),
   },
 } satisfies Dictionary;
 

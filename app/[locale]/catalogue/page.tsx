@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getLocaleFromPath } from "intlayer";
 import { CataloguePageProps, Product, Category} from "@/lib/types"
+import { getProductImage, placeholderProductImage } from "@/lib/home";
 
 function pathExists(src: string): boolean {
   const filePath = path.join(process.cwd(), "public", src);
@@ -64,34 +65,21 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
     getCategories(),
   ]);
 
-  const getProductImage = (product: Product): string => {
-    let candidate: string | null = null;
-    if (product.images) {
-      try {
-        const images = JSON.parse(product.images);
-        const pick = Array.isArray(images) ? images[0] : images;
-        if (typeof pick === "string") candidate = pick;
-        else if (pick && typeof pick.url === "string") candidate = pick.url;
-      } catch {
-        candidate = null;
-      }
+  const resolveProductImage = (product: Product): string => {
+    const candidate = getProductImage(product.images);
+    if (!candidate) return placeholderProductImage;
+    if (
+      candidate.startsWith("http://") ||
+      candidate.startsWith("https://") ||
+      candidate.startsWith("data:")
+    ) {
+      return candidate;
     }
-    return isValidImage(candidate) ? candidate : "/placeholder-product.jpg";
-  };
-
-  const isValidImage = (src: string | null): src is string => {
-    if (!src || typeof src !== "string") return false;
-    const s = src.trim();
-    if (!s) return false;
-    if (s.startsWith("http://") || s.startsWith("https://") || s.startsWith("data:")) return true;
-    if (s.startsWith("/")) {
-      try {
-        return pathExists(s);
-      } catch {
-        return false;
-      }
+    try {
+      return pathExists(candidate) ? candidate : placeholderProductImage;
+    } catch {
+      return placeholderProductImage;
     }
-    return false;
   };
 
   const formatPrice = (price: number) => {
@@ -200,10 +188,10 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
                 >
                   <div className="relative aspect-square overflow-hidden bg-[#f8f8f6]">
                     <div className="flex h-full w-full items-center justify-center text-6xl">
-                      {getProductImage(product) === '/placeholder-product.jpg' ? (
+                      {resolveProductImage(product) === '/placeholder-product.jpg' ? (
                         <span className="text-6xl">🧴</span>) : (
                         <Image
-                          src={getProductImage(product)}
+                          src={resolveProductImage(product)}
                           alt={product.name}
                           width={400}
                           height={300}

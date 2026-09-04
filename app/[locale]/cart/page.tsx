@@ -4,7 +4,7 @@ import prisma from '@/lib/prisma'
 import { getLocaleFromPath } from 'intlayer'
 import { getCurrentUserFromCookies } from '@/lib/auth'
 import { redirect } from 'next/navigation'
-import { getProductImage, placeholderProductImage } from '@/lib/home'
+import { getProductImage, placeholderProductImage, formatPrice } from '@/lib/home'
 
 interface CartItem {
   id: number
@@ -15,15 +15,6 @@ interface CartItem {
     price: number
     images: string | null
   }
-}
-
-function formatPrice(price: number) {
-  return new Intl.NumberFormat('fr-FR', {
-    style: 'currency',
-    currency: 'EUR',
-  })
-    .format(price)
-    .replace('€', 'Ar')
 }
 
 export default async function CartPage() {

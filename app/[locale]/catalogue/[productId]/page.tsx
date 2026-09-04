@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import AddToCartForm from '../../../components/AddToCartForm'
 import { getLocaleFromPath } from 'intlayer'
 import { getProductImage, placeholderProductImage } from '@/lib/home'
+import { formatPrice } from '@/lib/format'
 
 interface ProductPageProps {
   params: {
@@ -36,10 +37,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   const productImage = getProductImage(product.images) ?? placeholderProductImage
 
-  const priceFormatted = new Intl.NumberFormat('fr-FR', {
-    style: 'currency',
-    currency: 'EUR',
-  }).format(product.price)
+  const priceFormatted = formatPrice(product.price)
 
   return (
     <main className="bg[#FAFAF7] bg-[#fde8e8]/95 text-[#1a1a1a] antialiased">
@@ -76,8 +74,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 <p className="text-3xl font-semibold text-[#2d5a3d]">{priceFormatted}</p>
                 {product.compareAtPrice && product.compareAtPrice > product.price && (
                   <p className="text-sm text-[#999] line-through">
-                    {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' })
-                      .format(product.compareAtPrice)}
+                    {formatPrice(product.compareAtPrice)}
                   </p>
                 )}
               </div>

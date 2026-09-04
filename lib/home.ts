@@ -1,16 +1,13 @@
 import prisma from "@/lib/prisma";
 
+export { formatPrice, priceFormatter } from "@/lib/format";
+
 export const categoryVisuals = [
   { label: "VIS", className: "bg-[#eef3e8]" },
   { label: "COR", className: "bg-[#f5ede4]" },
   { label: "MAQ", className: "bg-[#e8eef5]" },
   { label: "CAP", className: "bg-[#f5eee4]" },
 ] as const;
-
-export const priceFormatter = new Intl.NumberFormat("fr-FR", {
-  style: "currency",
-  currency: "EUR",
-});
 
 export async function getCategories() {
   return prisma.category.findMany({
@@ -70,10 +67,6 @@ export async function getReviews() {
 export type CategoryWithCount = Awaited<ReturnType<typeof getCategories>>[number];
 export type ProductWithRelations = Awaited<ReturnType<typeof getFeaturedProducts>>[number];
 export type ReviewWithRelations = Awaited<ReturnType<typeof getReviews>>[number];
-
-export function formatPrice(price: number) {
-  return priceFormatter.format(price);
-}
 
 export function getCategoryVisual(categoryName?: string | null) {
   const categoryIndexByName: Record<string, number> = {

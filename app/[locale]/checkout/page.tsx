@@ -5,15 +5,7 @@ import { CartItemData } from '@/lib/types'
 import { getLocaleFromPath } from 'intlayer'
 import { getCurrentUserFromCookies } from '@/lib/auth'
 import { redirect } from 'next/navigation'
-
-function formatPrice(price: number) {
-  return new Intl.NumberFormat('fr-FR', {
-    style: 'currency',
-    currency: 'EUR',
-  })
-    .format(price)
-    .replace('€', 'Ar')
-}
+import { formatPrice } from '@/lib/format'
 
 export default async function CheckoutPage() {
   const locale = getLocaleFromPath()

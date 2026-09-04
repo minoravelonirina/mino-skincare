@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getLocaleFromPath } from "intlayer";
 import { CataloguePageProps, Product, Category} from "@/lib/types"
-import { getProductImage, placeholderProductImage } from "@/lib/home";
+import { getProductImage, placeholderProductImage, formatPrice } from "@/lib/home";
 
 function pathExists(src: string): boolean {
   const filePath = path.join(process.cwd(), "public", src);
@@ -80,13 +80,6 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
     } catch {
       return placeholderProductImage;
     }
-  };
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('fr-FR', {
-      style: 'currency',
-      currency: 'EUR',
-    }).format(price).replace('€', 'Ar');
   };
 
   return (

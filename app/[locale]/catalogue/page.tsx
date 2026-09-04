@@ -3,7 +3,8 @@ import path from "node:path";
 import prisma from "@/lib/prisma";
 import Image from "next/image";
 import Link from "next/link";
-import { getLocaleFromPath } from "intlayer";
+import { getIntlayer } from "next-intlayer";
+import { getLocale } from "next-intlayer/server";
 import { CataloguePageProps, Product, Category} from "@/lib/types"
 import { getProductImage, placeholderProductImage, formatPrice } from "@/lib/home";
 
@@ -58,7 +59,8 @@ async function getCategories() {
 }
 
 export default async function CataloguePage({ searchParams }: CataloguePageProps) {
-  const locale = getLocaleFromPath()
+  const locale = await getLocale();
+  const content = getIntlayer("catalogue", locale);
   const params = await searchParams;
   const [products, categories] = await Promise.all([
     getProducts(params.search, params.category),
@@ -89,9 +91,9 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
       {/* Hero Section */}
       <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
         <div className="text-center">
-          <h1 className="text-3xl font-serif text-[#1a1a1a] sm:text-4xl">Notre Catalogue</h1>
+          <h1 className="text-3xl font-serif text-[#1a1a1a] sm:text-4xl">{content.hero.title}</h1>
           <p className="mt-4 max-w-2xl mx-auto text-sm text-[#555] sm:text-base">
-            Découvrez notre sélection complète de produits cosmétiques naturels, des soins Mino aux marques partenaires de confiance.
+            {content.hero.description}
           </p>
         </div>
       </section>
@@ -107,7 +109,7 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
                   type="search"
                   name="search"
                   defaultValue={params.search}
-                  placeholder="Rechercher un produit..."
+                  placeholder={content.searchPlaceholder}
                   className="w-full rounded-3xl border border-[#e8e4dc] bg-white px-4 py-3 pl-12 text-sm outline-none focus:border-[#2d5a3d] focus:ring-2 focus:ring-[#c8deb4]"
                 />
                 <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#999]">🔍</div>
@@ -124,7 +126,7 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
                     : 'bg-[#eef3e8] text-[#2d5a3d] hover:bg-[#d4e8c2]'
                 }`}
               >
-                Tous ({products.length})
+                {content.all} ({products.length})
               </Link>
               {categories.map((category:any) => (
                 <Link
@@ -149,27 +151,27 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
         {products.length === 0 ? (
           <div className="text-center py-16">
             <div className="text-6xl mb-4">🔍</div>
-            <h3 className="text-xl font-semibold text-[#1a1a1a] mb-2">Aucun produit trouvé</h3>
-            <p className="text-[#555] mb-6">Essayez de modifier vos critères de recherche.</p>
+            <h3 className="text-xl font-semibold text-[#1a1a1a] mb-2">{content.empty.title}</h3>
+            <p className="text-[#555] mb-6">{content.empty.description}</p>
             <Link
               href={`/${locale}/catalogue`}
               className="inline-flex items-center justify-center rounded-md bg-[#2d5a3d] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#23472e]"
             >
-              Voir tous les produits
+              {content.empty.cta}
             </Link>
           </div>
         ) : (
           <>
             <div className="flex items-center justify-between mb-8">
               <p className="text-sm text-[#555]">
-                {products.length} produit{products.length > 1 ? 's' : ''} trouvé{products.length > 1 ? 's' : ''}
+                {products.length} {content.productCount}
               </p>
               <select className="rounded-xl border border-[#e8e4dc] bg-white px-4 py-2 text-sm outline-none focus:border-[#2d5a3d]">
-                <option>Trier par : Pertinence</option>
-                <option>Prix croissant</option>
-                <option>Prix décroissant</option>
-                <option>Nouveautés</option>
-                <option>Les plus populaires</option>
+                <option>{content.sortBy.label}</option>
+                <option>{content.sortBy.priceAsc}</option>
+                <option>{content.sortBy.priceDesc}</option>
+                <option>{content.sortBy.newest}</option>
+                <option>{content.sortBy.popular}</option>
               </select>
             </div>
 
@@ -194,12 +196,12 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
                     </div>
                     {product.isFeatured && (
                       <div className="absolute top-3 left-3 rounded-full bg-[#2d5a3d] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-white">
-                        Vedette
+                        {content.featuredBadge}
                       </div>
                     )}
                     {product.isOnSale && (
                       <div className="absolute top-3 right-3 rounded-full bg-[#E6A817] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-white">
-                        Promo
+                        {content.promoBadge}
                       </div>
                     )}
                   </div>
@@ -240,7 +242,7 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
                         )}
                       </div>
                       <button className="rounded-xl bg-[#2d5a3d] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#23472e] group-hover:bg-[#23472e]">
-                        + Panier
+                        {content.addToCart}
                       </button>
                     </div>
                   </div>
@@ -256,19 +258,19 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
         <div className="rounded-4xl bg-[#EEF3E8] px-6 py-10 sm:px-10 sm:py-14">
           <div className="grid gap-8 lg:grid-cols-[1.3fr_0.7fr] lg:items-center">
             <div>
-              <h2 className="text-3xl font-serif text-[#1a1a1a]">Rejoignez notre communauté</h2>
+              <h2 className="text-3xl font-serif text-[#1a1a1a]">{content.newsletter.title}</h2>
               <p className="mt-3 max-w-2xl text-sm leading-7 text-[#555] sm:text-base">
-                Inscrivez-vous pour recevoir nos offres exclusives, conseils bien-être et nouveautés Mino Skincare chaque semaine.
+                {content.newsletter.description}
               </p>
             </div>
             <form className="flex flex-col gap-3 rounded-3xl bg-white p-4 shadow-sm sm:flex-row sm:items-center">
               <input
                 type="email"
-                placeholder="Votre adresse email..."
+                placeholder={content.newsletter.placeholder}
                 className="flex-1 rounded-3xl border border-[#c8deb4] bg-white px-4 py-3 text-sm text-[#1a1a1a] outline-none focus:border-[#2d5a3d] focus:ring-2 focus:ring-[#c8deb4]"
               />
               <button className="rounded-3xl bg-[#2d5a3d] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#23472e]">
-                S'inscrire
+                {content.newsletter.submit}
               </button>
             </form>
           </div>

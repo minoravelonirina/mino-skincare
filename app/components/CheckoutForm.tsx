@@ -1,9 +1,11 @@
 "use client"
 
 import { useMemo, useState } from "react"
+import { useIntlayer } from "next-intlayer"
 import { CheckoutFormProps } from "../../lib/types"
 
 export default function CheckoutForm({ cartItems, totalAmount }: CheckoutFormProps) {
+  const content = useIntlayer("checkoutForm")
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -67,12 +69,12 @@ export default function CheckoutForm({ cartItems, totalAmount }: CheckoutFormPro
 
       if (!response.ok) {
         const error = await response.json()
-        throw new Error(error.message || "Impossible de valider la commande")
+        throw new Error(error.message || content.error.value)
       }
 
       const result = await response.json()
       setOrderNumber(result.data.orderNumber || null)
-      setStatus("Commande validée avec succès !")
+      setStatus(content.success.value)
     } catch (error) {
       setStatus((error as Error).message)
     } finally {
@@ -82,13 +84,13 @@ export default function CheckoutForm({ cartItems, totalAmount }: CheckoutFormPro
 
   return (
     <div className="rounded-3xl border border-[#e8e4dc] bg-white p-8 shadow-sm">
-      <h2 className="text-xl font-semibold text-[#1a1a1a]">Paiement et livraison</h2>
-      <p className="mt-2 text-sm text-[#555]">Entrez vos informations pour finaliser votre commande.</p>
+      <h2 className="text-xl font-semibold text-[#1a1a1a]">{content.title.value}</h2>
+      <p className="mt-2 text-sm text-[#555]">{content.subtitle.value}</p>
 
       <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="space-y-2 text-sm text-[#555]">
-            Nom complet
+            {content.fullName.value}
             <input
               type="text"
               value={formData.fullName}
@@ -98,7 +100,7 @@ export default function CheckoutForm({ cartItems, totalAmount }: CheckoutFormPro
             />
           </label>
           <label className="space-y-2 text-sm text-[#555]">
-            Email
+            {content.email.value}
             <input
               type="email"
               value={formData.email}
@@ -111,7 +113,7 @@ export default function CheckoutForm({ cartItems, totalAmount }: CheckoutFormPro
 
         <div className="space-y-4">
           <label className="space-y-2 text-sm text-[#555]">
-            Adresse
+            {content.street.value}
             <input
               type="text"
               value={formData.street}
@@ -123,7 +125,7 @@ export default function CheckoutForm({ cartItems, totalAmount }: CheckoutFormPro
 
           <div className="grid gap-4 sm:grid-cols-3">
             <label className="space-y-2 text-sm text-[#555]">
-              Ville
+              {content.city.value}
               <input
                 type="text"
                 value={formData.city}
@@ -133,7 +135,7 @@ export default function CheckoutForm({ cartItems, totalAmount }: CheckoutFormPro
               />
             </label>
             <label className="space-y-2 text-sm text-[#555]">
-              Code postal
+              {content.postalCode.value}
               <input
                 type="text"
                 value={formData.postalCode}
@@ -143,7 +145,7 @@ export default function CheckoutForm({ cartItems, totalAmount }: CheckoutFormPro
               />
             </label>
             <label className="space-y-2 text-sm text-[#555]">
-              Pays
+              {content.country.value}
               <input
                 type="text"
                 value={formData.country}
@@ -156,7 +158,7 @@ export default function CheckoutForm({ cartItems, totalAmount }: CheckoutFormPro
         </div>
 
         <div className="space-y-3 rounded-3xl border border-[#e8e4dc] bg-[#fafaf7] p-4">
-          <p className="text-sm font-semibold text-[#1a1a1a]">Mode de paiement</p>
+          <p className="text-sm font-semibold text-[#1a1a1a]">{content.paymentMethod.value}</p>
           <label className="flex items-center gap-3 text-sm text-[#555]">
             <input
               type="radio"
@@ -166,7 +168,7 @@ export default function CheckoutForm({ cartItems, totalAmount }: CheckoutFormPro
               onChange={(event) => handleChange("paymentMethod", event.target.value)}
               className="accent-[#2d5a3d]"
             />
-            Paiement par carte
+            {content.cardPayment.value}
           </label>
           <label className="flex items-center gap-3 text-sm text-[#555]">
             <input
@@ -177,7 +179,7 @@ export default function CheckoutForm({ cartItems, totalAmount }: CheckoutFormPro
               onChange={(event) => handleChange("paymentMethod", event.target.value)}
               className="accent-[#2d5a3d]"
             />
-            Paiement à la livraison
+            {content.cashOnDelivery.value}
           </label>
         </div>
 
@@ -186,14 +188,14 @@ export default function CheckoutForm({ cartItems, totalAmount }: CheckoutFormPro
           disabled={loading}
           className="w-full rounded-3xl bg-[#2d5a3d] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#23472e] disabled:cursor-not-allowed disabled:bg-[#95a28f]"
         >
-          {loading ? "Validation en cours..." : "Valider ma commande"}
+          {loading ? content.validating.value : content.submit.value}
         </button>
       </form>
 
       {status && (
         <div className="mt-4 rounded-3xl bg-[#eef3e8] p-4 text-sm text-[#1a1a1a]">
           <p>{status}</p>
-          {orderNumber && <p className="mt-2 font-semibold">Numéro de commande : {orderNumber}</p>}
+          {orderNumber && <p className="mt-2 font-semibold">{content.orderNumber.value} : {orderNumber}</p>}
         </div>
       )}
     </div>

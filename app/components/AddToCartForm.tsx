@@ -1,9 +1,11 @@
 "use client"
 
 import { useState } from "react"
+import { useIntlayer } from "next-intlayer"
 import { AddToCartFormProps } from "../../lib/types"
 
 export default function AddToCartForm({ productId }: AddToCartFormProps) {
+  const content = useIntlayer("catalogue").addToCartForm
   const [quantity, setQuantity] = useState(1)
   const [status, setStatus] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -26,10 +28,10 @@ export default function AddToCartForm({ productId }: AddToCartFormProps) {
 
       if (!response.ok) {
         const error = await response.json()
-        throw new Error(error.message || "Impossible d'ajouter au panier")
+        throw new Error(error.message || content.error.value)
       }
 
-      setStatus("Produit ajouté au panier 🎉")
+      setStatus(content.added.value)
     } catch (error) {
       setStatus((error as Error).message)
     } finally {
@@ -41,7 +43,7 @@ export default function AddToCartForm({ productId }: AddToCartFormProps) {
     <div className="space-y-4 rounded-3xl border border-[#e8e4dc] bg-white p-6 shadow-sm">
       <div className="flex items-center justify-between gap-3">
         <label className="text-sm font-medium text-[#1a1a1a]" htmlFor="quantity">
-          Quantité
+          {content.quantity.value}
         </label>
         <div className="flex items-center gap-2 rounded-full border border-[#e8e4dc] bg-[#fafaf7] p-1">
           <button
@@ -67,7 +69,7 @@ export default function AddToCartForm({ productId }: AddToCartFormProps) {
         disabled={loading}
         className="w-full rounded-3xl bg-[#2d5a3d] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#23472e] disabled:cursor-not-allowed disabled:bg-[#95a28f]"
       >
-        {loading ? "Ajout en cours..." : "Ajouter au panier"}
+        {loading ? content.adding.value : content.addToCart.value}
       </button>
       {status && <p className="text-sm text-[#555]">{status}</p>}
     </div>

@@ -3,7 +3,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import AddToCartForm from '../../../components/AddToCartForm'
-import { getLocaleFromPath } from 'intlayer'
+import { getIntlayer } from 'next-intlayer'
+import { getLocale } from 'next-intlayer/server'
 import { getProductImage, placeholderProductImage } from '@/lib/home'
 import { formatPrice } from '@/lib/format'
 
@@ -15,7 +16,8 @@ interface ProductPageProps {
 
 export default async function ProductPage({ params }: ProductPageProps) {
   await params;
-  const locale = getLocaleFromPath()
+  const locale = await getLocale();
+  const content = getIntlayer("catalogue", locale);
   const id = parseInt( params.productId, 10)
   console.log(id);
   
@@ -45,7 +47,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <Link href={`/${locale}/catalogue`} className="text-sm text-[#555] transition hover:text-[#2d5a3d]">
-              ← Retour au catalogue
+              {content.detail.backToCatalogue}
             </Link>
             <h1 className="mt-3 text-3xl font-serif text-[#1a1a1a]">{product.name}</h1>
           </div>
@@ -70,7 +72,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2 rounded-3xl bg-[#fafaf7] p-4">
-                <p className="text-xs uppercase tracking-[0.3em] text-[#8BAF7C]">Prix</p>
+                <p className="text-xs uppercase tracking-[0.3em] text-[#8BAF7C]">{content.detail.price}</p>
                 <p className="text-3xl font-semibold text-[#2d5a3d]">{priceFormatted}</p>
                 {product.compareAtPrice && product.compareAtPrice > product.price && (
                   <p className="text-sm text-[#999] line-through">
@@ -79,23 +81,23 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 )}
               </div>
               <div className="space-y-2 rounded-3xl bg-[#fafaf7] p-4">
-                <p className="text-xs uppercase tracking-[0.3em] text-[#8BAF7C]">Stock</p>
+                <p className="text-xs uppercase tracking-[0.3em] text-[#8BAF7C]">{content.detail.stock}</p>
                 <p className="text-lg font-semibold text-[#1a1a1a]">{product.stock}</p>
               </div>
             </div>
 
             <div className="mt-8 space-y-4 text-sm leading-7 text-[#555]">
               <div>
-                <h2 className="mb-2 text-lg font-semibold text-[#1a1a1a]">Description</h2>
-                <p>{product.description || 'Description du produit non disponible.'}</p>
+                <h2 className="mb-2 text-lg font-semibold text-[#1a1a1a]">{content.detail.description}</h2>
+                <p>{product.description || content.detail.descriptionUnavailable}</p>
               </div>
               <div>
-                <h2 className="mb-2 text-lg font-semibold text-[#1a1a1a]">Ingrédients</h2>
-                <p>{product.ingredients || 'Informations non renseignées.'}</p>
+                <h2 className="mb-2 text-lg font-semibold text-[#1a1a1a]">{content.detail.ingredients}</h2>
+                <p>{product.ingredients || content.detail.ingredientsUnavailable}</p>
               </div>
               <div>
-                <h2 className="mb-2 text-lg font-semibold text-[#1a1a1a]">Conseils d’utilisation</h2>
-                <p>{product.usage || 'Mode d\’utilisation à découvrir.'}</p>
+                <h2 className="mb-2 text-lg font-semibold text-[#1a1a1a]">{content.detail.usage}</h2>
+                <p>{product.usage || content.detail.usageUnavailable}</p>
               </div>
             </div>
           </div>
@@ -103,11 +105,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <div className="space-y-6">
             <AddToCartForm productId={product.id} />
             <div className="rounded-3xl bg-white p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-[#1a1a1a]">Pourquoi choisir ce produit ?</h2>
+              <h2 className="text-lg font-semibold text-[#1a1a1a]">{content.detail.whyChoose}</h2>
               <ul className="mt-4 space-y-3 text-sm text-[#555]">
-                <li>• Formule naturelle et contrôlée</li>
-                <li>• Élaboré pour tous les types de peau</li>
-                <li>• Fabriqué et vendu par Mino Skincare</li>
+                {content.detail.whyChooseItems.map((item: any, i: number) => (
+                  <li key={i}>• {item}</li>
+                ))}
               </ul>
             </div>
           </div>

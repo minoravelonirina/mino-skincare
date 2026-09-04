@@ -1,7 +1,8 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import prisma from '@/lib/prisma'
-import { getLocaleFromPath } from 'intlayer'
+import { getIntlayer } from 'next-intlayer'
+import { getLocale } from 'next-intlayer/server'
 import { getCurrentUserFromCookies } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { getProductImage, placeholderProductImage, formatPrice } from '@/lib/home'
@@ -18,7 +19,8 @@ interface CartItem {
 }
 
 export default async function CartPage() {
-  const locale = getLocaleFromPath()
+  const locale = await getLocale()
+  const content = getIntlayer("cart", locale).cart
   const user = await getCurrentUserFromCookies()
   if (!user) redirect(`/${locale}/login`)
   const cartItems = await prisma.cartItem.findMany({
@@ -35,26 +37,26 @@ export default async function CartPage() {
       <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="text-3xl font-serif text-[#1a1a1a]">Votre panier</h1>
-            <p className="mt-2 text-sm text-[#555]">Revoyez les articles sélectionnés avant de passer à la caisse.</p>
+            <h1 className="text-3xl font-serif text-[#1a1a1a]">{content.title}</h1>
+            <p className="mt-2 text-sm text-[#555]">{content.subtitle}</p>
           </div>
           <Link
             href={`/${locale}/catalogue`}
             className="inline-flex items-center justify-center rounded-full border border-[#d8d4ca] bg-white px-5 py-3 text-sm font-semibold text-[#2d5a3d] transition hover:bg-[#eef3e8]"
           >
-            Continuer mes achats
+            {content.continueShopping}
           </Link>
         </div>
 
         {cartItems.length === 0 ? (
           <div className="rounded-3xl bg-white p-10 text-center shadow-sm">
-            <p className="text-lg font-semibold text-[#1a1a1a]">Votre panier est vide</p>
-            <p className="mt-3 text-sm text-[#555]">Ajoutez des produits depuis la boutique pour finaliser votre commande.</p>
+            <p className="text-lg font-semibold text-[#1a1a1a]">{content.empty.title}</p>
+            <p className="mt-3 text-sm text-[#555]">{content.empty.description}</p>
             <Link
               href={`/${locale}/catalogue`}
               className="mt-6 inline-flex rounded-full bg-[#2d5a3d] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#23472e]"
             >
-              Voir le catalogue
+              {content.empty.cta}
             </Link>
           </div>
         ) : (
@@ -74,11 +76,11 @@ export default async function CartPage() {
                     </div>
                     <div className="flex-1">
                       <h2 className="text-base font-semibold text-[#1a1a1a]">{item.product.name}</h2>
-                      <p className="mt-2 text-sm text-[#555]">Quantité : {item.quantity}</p>
+                      <p className="mt-2 text-sm text-[#555]">{content.quantity} : {item.quantity}</p>
                     </div>
                     <div className="text-right">
                       <p className="text-base font-semibold text-[#2d5a3d]">{formatPrice(item.product.price)}</p>
-                      <p className="text-sm text-[#999]">Total : {formatPrice(item.product.price * item.quantity)}</p>
+                      <p className="text-sm text-[#999]">{content.total} : {formatPrice(item.product.price * item.quantity)}</p>
                     </div>
                   </div>
                 </div>
@@ -88,26 +90,26 @@ export default async function CartPage() {
             <aside className="rounded-3xl bg-white p-6 shadow-sm">
               <div className="space-y-4">
                 <div className="flex items-center justify-between text-sm text-[#555]">
-                  <span>Sous-total</span>
+                  <span>{content.subtotal}</span>
                   <span>{formatPrice(total)}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm text-[#555]">
-                  <span>Livraison</span>
+                  <span>{content.shipping}</span>
                   <span>{formatPrice(12000)}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm text-[#555]">
-                  <span>TVA estimée</span>
+                  <span>{content.tax}</span>
                   <span>{formatPrice(Math.round(total * 0.1))}</span>
                 </div>
                 <div className="border-t border-[#e8e4dc] pt-4 text-lg font-semibold text-[#1a1a1a]">
-                  Total commande
+                  {content.orderTotal}
                   <span className="float-right">{formatPrice(total + 12000 + Math.round(total * 0.1))}</span>
                 </div>
                 <Link
                   href={`/${locale}/checkout`}
                   className="block rounded-3xl bg-[#2d5a3d] px-6 py-3 text-center text-sm font-semibold text-white transition hover:bg-[#23472e]"
                 >
-                  Passer à la caisse
+                  {content.checkout}
                 </Link>
               </div>
             </aside>

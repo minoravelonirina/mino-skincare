@@ -13,17 +13,7 @@ export default function TestimonialsSection({ reviews, content }: { reviews: any
       <div className="absolute inset-0 bg-gradient-to-b from-white via-[#faf8f5] to-white" />
       
       <div className="relative mx-auto max-w-7xl px-5 py-20 sm:px-6 sm:py-28 lg:px-8">
-        <div className="mb-12 flex flex-col items-center text-center">
-          <span className="inline-flex items-center gap-2 rounded-full bg-[#2d5a3d]/5 px-4 py-2 text-[12px] font-medium text-[#2d5a3d]">
-            Reviews
-          </span>
-          <h2 className="mt-5 font-serif text-[32px] tracking-tight text-[#1a1a1a] sm:text-[40px]">
-            {title}
-          </h2>
-          <p className="mt-4 max-w-lg text-[15px] leading-relaxed text-[#888]">
-            {description}
-          </p>
-          
+        <SectionHeader eyebrow="Reviews" title={title} description={description}>
           <div className="mt-6 inline-flex items-center gap-3 rounded-full bg-white px-5 py-3 ring-1 ring-[#e8e4dc]">
             <div className="flex items-center gap-1">
               {[1, 2, 3, 4, 5].map((star) => (
@@ -40,7 +30,7 @@ export default function TestimonialsSection({ reviews, content }: { reviews: any
             <span className="text-[14px] font-semibold text-[#1a1a1a]">{avg.toFixed(1)}</span>
             <span className="text-[13px] text-[#aaa]">({reviews.length} reviews)</span>
           </div>
-        </div>
+        </SectionHeader>
 
         <div className="grid gap-5 lg:grid-cols-3">
           {reviews.map((review) => (

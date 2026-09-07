@@ -12,17 +12,7 @@ export default function FeaturedProductsSection({ products, content }: { product
   return (
     <section id="vitrine" className="relative">
       <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 sm:py-28 lg:px-8">
-        <div className="mb-12 flex flex-col items-center text-center">
-          <span className="inline-flex items-center gap-2 rounded-full bg-[#2d5a3d]/5 px-4 py-2 text-[12px] font-medium text-[#2d5a3d]">
-            Featured
-          </span>
-          <h2 className="mt-5 font-serif text-[32px] tracking-tight text-[#1a1a1a] sm:text-[40px]">
-            {title}
-          </h2>
-          <p className="mt-4 max-w-lg text-[15px] leading-relaxed text-[#888]">
-            {description}
-          </p>
-        </div>
+        <SectionHeader eyebrow="Featured" title={title} description={description} />
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {products.map((product) => (

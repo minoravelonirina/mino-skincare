@@ -24,7 +24,7 @@ export default function LanguageSwitcher({ locales = ["fr", "en"] }: { locales?:
         <Link
           key={loc}
           href={buildHref(loc)}
-          className="rounded-full border px-3 py-1 text-sm transition hover:bg-[#eef3e8]"
+          className="rounded-full border px-3 py-1 text-sm transition hover:bg-cream"
           aria-label={`Switch language to ${loc}`}
         >
           {loc.toUpperCase()}

@@ -57,7 +57,7 @@ export default function DashboardPage() {
     return (
       <div className="flex min-h-[70vh] items-center justify-center bg-[#FAFAF7]">
         <div className="flex flex-col items-center gap-4">
-          <div className="h-10 w-10 animate-spin rounded-full border-2 border-[#e0ddd5] border-t-[#2d5a3d]" />
+          <div className="h-10 w-10 animate-spin rounded-full border-2 border-[#e0ddd5] border-t-chocolate" />
           <div className="text-sm text-[#777]">{content.loading}</div>
         </div>
       </div>
@@ -72,10 +72,10 @@ export default function DashboardPage() {
       <nav className="sticky top-0 z-30 border-b border-[#e0ddd5] bg-white/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 sm:px-6 lg:px-8">
           <Link href={`/${locale}`} className="group flex items-center gap-1">
-            <span className="font-serif text-[22px] font-semibold tracking-tight text-[#2d5a3d] transition-colors duration-300 group-hover:text-[#1e3d2a]">
+            <span className="font-serif text-[22px] font-semibold tracking-tight text-chocolate transition-colors duration-300 group-hover:text-terracotta">
               Mino
             </span>
-            <span className="font-serif text-[22px] font-light italic tracking-tight text-[#8BAF7C] transition-colors duration-300 group-hover:text-[#6d9460]">
+            <span className="font-serif text-[22px] font-light italic tracking-tight text-beige transition-colors duration-300 group-hover:text-honey">
               Skincare
             </span>
           </Link>
@@ -83,13 +83,13 @@ export default function DashboardPage() {
           <div className="flex items-center gap-2">
             <Link
               href={`/${locale}/catalogue`}
-              className="hidden items-center gap-2 rounded-full px-4 py-2 text-[13px] font-medium text-[#555] transition-colors duration-300 hover:text-[#2d5a3d] sm:inline-flex"
+              className="hidden items-center gap-2 rounded-full px-4 py-2 text-[13px] font-medium text-[#555] transition-colors duration-300 hover:text-chocolate sm:inline-flex"
             >
               {content.goToShop}
             </Link>
             <button
               onClick={handleLogout}
-              className="rounded-full bg-[#2d5a3d] px-5 py-2.5 text-[13px] font-medium text-white transition-all duration-300 hover:bg-[#1e3d2a] hover:shadow-lg hover:shadow-[#2d5a3d]/20"
+              className="rounded-full bg-chocolate px-5 py-2.5 text-[13px] font-medium text-white transition-all duration-300 hover:bg-terracotta hover:shadow-lg hover:shadow-chocolate/20"
             >
               {content.logout}
             </button>
@@ -107,7 +107,7 @@ export default function DashboardPage() {
                   <a
                     key={item.key}
                     href={`#${item.href.replace('#', '')}`}
-                    className="rounded-2xl px-5 py-3 text-[14px] font-medium text-[#6b6b6b] transition-all duration-300 hover:bg-[#eef3e8] hover:text-[#2d5a3d]"
+                    className="rounded-2xl px-5 py-3 text-[14px] font-medium text-[#6b6b6b] transition-all duration-300 hover:bg-cream hover:text-chocolate"
                   >
                     {content[item.labelKey]}
                   </a>
@@ -119,13 +119,13 @@ export default function DashboardPage() {
           {/* Content */}
           <div className="flex flex-col gap-8">
             {/* Welcome header */}
-            <section className="relative overflow-hidden rounded-[2rem] bg-[#2d5a3d] p-8 text-white sm:p-12">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#2d5a3d] via-[#2d5a3d] to-[#1e3d2a]" />
-              <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[#8BAF7C]/20 blur-3xl" />
+            <section className="relative overflow-hidden rounded-[2rem] bg-chocolate p-8 text-white sm:p-12">
+              <div className="absolute inset-0 bg-gradient-to-br from-chocolate via-chocolate to-terracotta" />
+              <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-beige/20 blur-3xl" />
               <div className="relative">
                 <div className="flex flex-wrap items-center gap-3">
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[11px] font-medium tracking-wide">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#8BAF7C]" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-beige" />
                     {content.statusOnline}
                   </span>
                   <span className="rounded-full bg-[#E6A817] px-3 py-1 text-[11px] font-semibold text-white">
@@ -136,23 +136,23 @@ export default function DashboardPage() {
                 <h1 className="mt-6 font-serif text-3xl leading-[1.15] tracking-tight sm:text-4xl">
                   {content.welcome},
                 </h1>
-                <p className="mt-2 font-serif text-xl font-light italic text-[#8BAF7C] sm:text-2xl">
+                <p className="mt-2 font-serif text-xl font-light italic text-beige sm:text-2xl">
                   {userData?.email}
                 </p>
 
-                <div className="mt-8 flex flex-wrap items-center gap-6 text-[13px] text-[#eef3e8]">
+                <div className="mt-8 flex flex-wrap items-center gap-6 text-[13px] text-cream">
                   <div>
-                    <span className="block uppercase tracking-wider text-[#8BAF7C]">{content.email}</span>
+                    <span className="block uppercase tracking-wider text-beige">{content.email}</span>
                     <span className="mt-1 block font-medium text-white">{userData?.email}</span>
                   </div>
                   <div className="h-8 w-px bg-white/10" />
                   <div>
-                    <span className="block uppercase tracking-wider text-[#8BAF7C]">{content.userID}</span>
+                    <span className="block uppercase tracking-wider text-beige">{content.userID}</span>
                     <span className="mt-1 block font-medium text-white">#{userData?.userId}</span>
                   </div>
                   <div className="h-8 w-px bg-white/10" />
                   <div>
-                    <span className="block uppercase tracking-wider text-[#8BAF7C]">{content.role}</span>
+                    <span className="block uppercase tracking-wider text-beige">{content.role}</span>
                     <span className="mt-1 block font-medium text-white">{role}</span>
                   </div>
                 </div>
@@ -169,15 +169,15 @@ export default function DashboardPage() {
               </p>
               <dl className="mt-6 grid gap-4 sm:grid-cols-2">
                 <div className="rounded-2xl bg-[#f8f6f3] p-5">
-                  <dt className="text-[11px] uppercase tracking-wider text-[#8BAF7C]">{content.email}</dt>
+                  <dt className="text-[11px] uppercase tracking-wider text-beige">{content.email}</dt>
                   <dd className="mt-1.5 text-[15px] font-medium text-[#1a1a1a]">{userData?.email}</dd>
                 </div>
                 <div className="rounded-2xl bg-[#f8f6f3] p-5">
-                  <dt className="text-[11px] uppercase tracking-wider text-[#8BAF7C]">{content.userID}</dt>
+                  <dt className="text-[11px] uppercase tracking-wider text-beige">{content.userID}</dt>
                   <dd className="mt-1.5 text-[15px] font-medium text-[#1a1a1a]">#{userData?.userId}</dd>
                 </div>
                 <div className="rounded-2xl bg-[#f8f6f3] p-5">
-                  <dt className="text-[11px] uppercase tracking-wider text-[#8BAF7C]">{content.role}</dt>
+                  <dt className="text-[11px] uppercase tracking-wider text-beige">{content.role}</dt>
                   <dd className="mt-1.5 text-[15px] font-medium text-[#1a1a1a]">{role}</dd>
                 </div>
               </dl>
@@ -190,7 +190,7 @@ export default function DashboardPage() {
               </h2>
               {protectedData ? (
                 <div className="mt-6 space-y-3">
-                  <div className="rounded-2xl bg-[#eef3e8] p-5">
+                  <div className="rounded-2xl bg-cream p-5">
                     <p className="text-[15px] leading-7 text-[#1a1a1a]">{protectedData.secretInfo}</p>
                   </div>
                   <p className="text-[13px] text-[#999]">

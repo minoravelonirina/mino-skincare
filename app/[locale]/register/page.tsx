@@ -63,10 +63,10 @@ export default function RegisterPage() {
 
   return (
     <AuthContainer>
-      <div className="relative rounded-[2rem] border border-[#e8e4dc] bg-white/90 p-8 shadow-xl shadow-[#2d5a3d]/5 backdrop-blur-xl sm:p-10">
+      <div className="relative rounded-[2rem] border border-[#e8e4dc] bg-white/90 p-8 shadow-xl shadow-chocolate/5 backdrop-blur-xl sm:p-10">
         <div className="space-y-2 text-center">
-          <div className="mb-2 font-serif text-4xl font-semibold text-[#2d5a3d]">
-            Mino<span className="font-light italic text-[#8BAF7C]">Skincare</span>
+          <div className="mb-2 font-serif text-4xl font-semibold text-chocolate">
+            Mino<span className="font-light italic text-beige">Skincare</span>
           </div>
         </div>
 
@@ -94,14 +94,14 @@ export default function RegisterPage() {
         </div>
 
         {message && (
-          <div className="mt-4 rounded-2xl bg-[#eef3e8] p-3 text-center text-sm font-medium text-[#2d5a3d]">
+          <div className="mt-4 rounded-2xl bg-cream p-3 text-center text-sm font-medium text-chocolate">
             {message}
           </div>
         )}
 
         <div className="mt-6 flex items-center justify-center gap-2 border-t border-[#f0ede6] pt-5 text-sm">
           <span className="text-[#888]">{hasAccount}</span>
-          <Link href={`/${locale}/login`} className="font-medium text-[#2d5a3d] hover:text-[#1e3d2a]">
+          <Link href={`/${locale}/login`} className="font-medium text-chocolate hover:text-terracotta">
             {signin}
           </Link>
         </div>

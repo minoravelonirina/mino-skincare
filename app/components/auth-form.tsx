@@ -48,7 +48,7 @@ export function AuthForm({ type, labels, loading = false, onSubmit }: AuthFormPr
   };
 
   const inputClass =
-    "w-full rounded-2xl border border-[#e8e4dc] bg-white px-4 py-3 text-sm text-[#1a1a1a] outline-none transition-all duration-300 placeholder:text-[#999] focus:border-[#2d5a3d] focus:ring-2 focus:ring-[#c8deb4]";
+    "w-full rounded-2xl border border-[#e8e4dc] bg-white px-4 py-3 text-sm text-[#1a1a1a] outline-none transition-all duration-300 placeholder:text-[#999] focus:border-chocolate focus:ring-2 focus:ring-beige-light";
 
   const fieldLabelClass = "block text-sm font-medium text-[#555]";
 
@@ -124,7 +124,7 @@ export function AuthForm({ type, labels, loading = false, onSubmit }: AuthFormPr
             type="button"
             onClick={() => setShowPassword(!showPassword)}
             aria-label={showPassword ? "Hide password" : "Show password"}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-[#8BAF7C] transition-colors hover:text-[#2d5a3d]"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-beige transition-colors hover:text-chocolate"
           >
             {showPassword ? <EyeOff size={19} /> : <Eye size={19} />}
           </button>
@@ -152,7 +152,7 @@ export function AuthForm({ type, labels, loading = false, onSubmit }: AuthFormPr
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-full bg-[#2d5a3d] px-6 py-3.5 text-sm font-semibold text-white transition-all duration-300 hover:bg-[#1e3d2a] hover:shadow-lg hover:shadow-[#2d5a3d]/20 active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-[#95a28f] disabled:hover:shadow-none"
+        className="w-full rounded-full bg-chocolate px-6 py-3.5 text-sm font-semibold text-white transition-all duration-300 hover:bg-terracotta hover:shadow-lg hover:shadow-chocolate/20 active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-[#95a28f] disabled:hover:shadow-none"
       >
         {labels.submit}
       </button>

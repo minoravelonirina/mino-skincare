@@ -1,6 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;700&display=swap');
 @import "tailwindcss";
 
+@theme {
+  --color-cream: #f2e6dd;
+  --color-beige-light: #eddfc9;
+  --color-beige: #e0c7a8;
+  --color-honey: #cfab7a;
+  --color-caramel: #bf9264;
+  --color-terracotta: #af7c52;
+  --color-chocolate: #9f643e;
+  --color-chocolate-dark: #4e2a17;
+}
+
 :root {
   color-scheme: light;
 }
@@ -8,7 +19,6 @@
 html,
 body {
   overflow-x: hidden;
-  scroll-behavior: smooth;
 }
 
 html {
@@ -17,7 +27,7 @@ html {
 
 body {
   min-height: 100vh;
-  background: #FAFAF7;
+  background: #faf8f5;
   color: #1a1a1a;
 }
 
@@ -33,6 +43,6 @@ select {
 }
 
 ::selection {
-  background: rgba(45, 90, 61, 0.15);
+  background: rgba(159, 100, 62, 0.15);
 }
 

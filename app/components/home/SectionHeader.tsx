@@ -19,7 +19,7 @@ export default function SectionHeader({
   return (
     <div className={`mb-12 flex flex-col ${alignItems}`}>
       {eyebrow && (
-        <span className="inline-flex items-center gap-2 rounded-full bg-[#2d5a3d]/5 px-4 py-2 text-[12px] font-medium text-[#2d5a3d]">
+        <span className="inline-flex items-center gap-2 rounded-full bg-chocolate/5 px-4 py-2 text-[12px] font-medium text-chocolate">
           {eyebrow}
         </span>
       )}

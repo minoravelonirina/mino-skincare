@@ -9,14 +9,14 @@ export default function NewsletterSection({ content }: { content: any }) {
       <div className="absolute inset-0 bg-gradient-to-br from-[#f8f6f3] via-white to-[#f8f6f3]" />
       
       <div className="relative mx-auto max-w-7xl px-5 py-20 sm:px-6 sm:py-28 lg:px-8">
-        <div className="relative overflow-hidden rounded-[2rem] bg-[#2d5a3d] px-8 py-14 sm:px-14 sm:py-20">
-          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[#8BAF7C]/20 blur-3xl" />
-          <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-[#8BAF7C]/10 blur-3xl" />
+        <div className="relative overflow-hidden rounded-[2rem] bg-chocolate px-8 py-14 sm:px-14 sm:py-20">
+          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-beige/20 blur-3xl" />
+          <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-beige/10 blur-3xl" />
           
           <div className="relative grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-center">
             <div>
               <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-[12px] font-medium text-white/80 backdrop-blur-sm">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#8BAF7C]" />
+                <span className="h-1.5 w-1.5 rounded-full bg-beige" />
                 Newsletter
               </span>
               <h2 className="mt-6 font-serif text-[32px] leading-tight text-white sm:text-[40px]">
@@ -32,9 +32,9 @@ export default function NewsletterSection({ content }: { content: any }) {
                 <input
                   type="email"
                   placeholder={placeholder}
-                  className="flex-1 rounded-xl bg-white/95 px-5 py-4 text-[14px] text-[#1a1a1a] placeholder:text-[#999] outline-none transition-all duration-300 focus:ring-2 focus:ring-[#8BAF7C]/50"
+                  className="flex-1 rounded-xl bg-white/95 px-5 py-4 text-[14px] text-[#1a1a1a] placeholder:text-[#999] outline-none transition-all duration-300 focus:ring-2 focus:ring-beige/50"
                 />
-                <button className="rounded-xl bg-[#1e3d2a] px-8 py-4 text-[14px] font-medium text-white transition-all duration-300 hover:bg-[#153020] hover:shadow-lg hover:shadow-[#1e3d2a]/30">
+                <button className="rounded-xl bg-terracotta px-8 py-4 text-[14px] font-medium text-white transition-all duration-300 hover:bg-chocolate-dark hover:shadow-lg hover:shadow-terracotta/30">
                   {submit}
                 </button>
               </form>

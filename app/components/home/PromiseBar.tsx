@@ -37,7 +37,7 @@ export default function PromiseBar({ content }: { content: any }) {
               key={index}
               className="group flex items-center gap-3 rounded-2xl px-4 py-3 transition-colors duration-300 hover:bg-[#f8f6f3]"
             >
-              <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-[#2d5a3d]/5 text-[#2d5a3d] transition-colors duration-300 group-hover:bg-[#2d5a3d] group-hover:text-white">
+              <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-chocolate/5 text-chocolate transition-colors duration-300 group-hover:bg-chocolate group-hover:text-white">
                 {icons[index % icons.length]}
               </span>
               <span className="text-[13px] font-medium text-[#4a4a4a]">

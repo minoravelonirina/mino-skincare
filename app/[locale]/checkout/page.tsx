@@ -7,18 +7,36 @@ import { getLocale } from 'next-intlayer/server'
 import { getCurrentUserFromCookies } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { formatPrice } from '@/lib/format'
+import StoreUnavailable from '@/app/components/StoreUnavailable'
+
+interface CheckoutCartItem {
+  id: number
+  quantity: number
+  product: {
+    id: number
+    name: string
+    price: number
+  }
+}
 
 export default async function CheckoutPage() {
   const locale = await getLocale()
   const content = getIntlayer("cart", locale).checkout
   const user = await getCurrentUserFromCookies()
   if (!user) redirect(`/${locale}/login`)
-  const cartItems = await prisma.cartItem.findMany({
-    where: { userId: user.userId },
-    include: {
-      product: true,
-    },
-  })
+
+  let cartItems: CheckoutCartItem[] = []
+  try {
+    cartItems = await prisma.cartItem.findMany({
+      where: { userId: user.userId },
+      include: {
+        product: true,
+      },
+    })
+  } catch (err) {
+    console.error("Checkout fetch failed:", err)
+    return <StoreUnavailable locale={locale} />
+  }
 
   const mappedCartItems: CartItemData[] = cartItems.map((item) => ({
     id: item.id,
@@ -45,7 +63,7 @@ export default async function CheckoutPage() {
           </div>
           <Link
             href={`/${locale}/cart`}
-            className="inline-flex items-center justify-center rounded-full border border-[#d8d4ca] bg-white px-5 py-3 text-sm font-semibold text-[#2d5a3d] transition hover:bg-[#eef3e8]"
+            className="inline-flex items-center justify-center rounded-full border border-[#d8d4ca] bg-white px-5 py-3 text-sm font-semibold text-chocolate transition hover:bg-cream"
           >
             {content.backToCart}
           </Link>
@@ -69,7 +87,7 @@ export default async function CheckoutPage() {
                         <p className="font-semibold text-[#1a1a1a]">{item.product.name}</p>
                         <p className="text-sm text-[#555]">{content.quantity} : {item.quantity}</p>
                       </div>
-                      <p className="text-sm font-semibold text-[#2d5a3d]">{formatPrice(item.product.price * item.quantity)}</p>
+                      <p className="text-sm font-semibold text-chocolate">{formatPrice(item.product.price * item.quantity)}</p>
                     </div>
                   </div>
                 ))}

@@ -8,6 +8,7 @@ import { getLocale } from "next-intlayer/server";
 import { CataloguePageProps, Product, Category} from "@/lib/types"
 import { getProductImage, placeholderProductImage, formatPrice } from "@/lib/home";
 import NewsletterSection from "@/app/components/home/NewsletterSection";
+import StoreUnavailable from "@/app/components/StoreUnavailable";
 
 function pathExists(src: string): boolean {
   const filePath = path.join(process.cwd(), "public", src);
@@ -63,10 +64,19 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
   const locale = await getLocale();
   const content = getIntlayer("catalogue", locale);
   const params = await searchParams;
-  const [products, categories] = await Promise.all([
-    getProducts(params.search, params.category),
-    getCategories(),
-  ]);
+
+  let products: Awaited<ReturnType<typeof getProducts>> = [];
+  let categories: Awaited<ReturnType<typeof getCategories>> = [];
+
+  try {
+    [products, categories] = await Promise.all([
+      getProducts(params.search, params.category),
+      getCategories(),
+    ]);
+  } catch (err) {
+    console.error("Catalogue data fetch failed:", err);
+    return <StoreUnavailable locale={locale} />;
+  }
 
   const resolveProductImage = (product: Product): string => {
     const candidate = getProductImage(product.images);
@@ -111,7 +121,7 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
                   name="search"
                   defaultValue={params.search}
                   placeholder={content.searchPlaceholder}
-                  className="w-full rounded-3xl border border-[#e8e4dc] bg-white px-4 py-3 pl-12 text-sm outline-none focus:border-[#2d5a3d] focus:ring-2 focus:ring-[#c8deb4]"
+                  className="w-full rounded-3xl border border-[#e8e4dc] bg-white px-4 py-3 pl-12 text-sm outline-none focus:border-chocolate focus:ring-2 focus:ring-beige-light"
                 />
                 <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#999]">🔍</div>
               </div>
@@ -123,8 +133,8 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
                 href={`/${locale}/catalogue`}
                 className={`rounded-full px-4 py-2 text-sm font-medium transition ${
                   !params.category
-                    ? 'bg-[#2d5a3d] text-white'
-                    : 'bg-[#eef3e8] text-[#2d5a3d] hover:bg-[#d4e8c2]'
+                    ? 'bg-chocolate text-white'
+                    : 'bg-cream text-chocolate hover:bg-cream'
                 }`}
               >
                 {content.all} ({products.length})
@@ -135,8 +145,8 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
                   href={`/${locale}/catalogue?category=${category.slug}`}
                   className={`rounded-full px-4 py-2 text-sm font-medium transition ${
                     params.category === category.slug
-                      ? 'bg-[#2d5a3d] text-white'
-                      : 'bg-[#eef3e8] text-[#2d5a3d] hover:bg-[#d4e8c2]'
+                      ? 'bg-chocolate text-white'
+                      : 'bg-cream text-chocolate hover:bg-cream'
                   }`}
                 >
                   {category.name} ({category._count.products})
@@ -156,7 +166,7 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
             <p className="text-[#555] mb-6">{content.empty.description}</p>
             <Link
               href={`/${locale}/catalogue`}
-              className="inline-flex items-center justify-center rounded-md bg-[#2d5a3d] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#23472e]"
+              className="inline-flex items-center justify-center rounded-md bg-chocolate px-6 py-3 text-sm font-semibold text-white transition hover:bg-chocolate-dark"
             >
               {content.empty.cta}
             </Link>
@@ -167,7 +177,7 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
               <p className="text-sm text-[#555]">
                 {products.length} {content.productCount}
               </p>
-              <select className="rounded-xl border border-[#e8e4dc] bg-white px-4 py-2 text-sm outline-none focus:border-[#2d5a3d]">
+              <select className="rounded-xl border border-[#e8e4dc] bg-white px-4 py-2 text-sm outline-none focus:border-chocolate">
                 <option>{content.sortBy.label}</option>
                 <option>{content.sortBy.priceAsc}</option>
                 <option>{content.sortBy.priceDesc}</option>
@@ -196,7 +206,7 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
                         )}
                     </div>
                     {product.isFeatured && (
-                      <div className="absolute top-3 left-3 rounded-full bg-[#2d5a3d] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-white">
+                      <div className="absolute top-3 left-3 rounded-full bg-chocolate px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-white">
                         {content.featuredBadge}
                       </div>
                     )}
@@ -210,12 +220,12 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
                   <div className="p-6">
                     <div className="mb-2 flex items-center gap-2">
                       {product.brand && (
-                        <span className="rounded-full bg-[#eef3e8] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#2d5a3d]">
+                        <span className="rounded-full bg-cream px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-chocolate">
                           {product.brand.name}
                         </span>
                       )}
                       {product.category && (
-                        <span className="rounded-full bg-[#f5ede4] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#8BAF7C]">
+                        <span className="rounded-full bg-[#f5ede4] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-beige">
                           {product.category.name}
                         </span>
                       )}
@@ -233,7 +243,7 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
 
                     <div className="flex items-center justify-between gap-3">
                       <div>
-                        <div className="text-lg font-semibold text-[#2d5a3d]">
+                        <div className="text-lg font-semibold text-chocolate">
                           {formatPrice(product.price)}
                         </div>
                         {product.compareAtPrice && product.compareAtPrice > product.price && (
@@ -242,7 +252,7 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
                           </div>
                         )}
                       </div>
-                      <button className="rounded-xl bg-[#2d5a3d] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#23472e] group-hover:bg-[#23472e]">
+                      <button className="rounded-xl bg-chocolate px-4 py-2 text-sm font-semibold text-white transition hover:bg-chocolate-dark group-hover:bg-chocolate-dark">
                         {content.addToCart}
                       </button>
                     </div>

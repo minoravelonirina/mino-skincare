@@ -48,7 +48,7 @@ export default function AddToCartForm({ productId }: AddToCartFormProps) {
         <div className="flex items-center gap-2 rounded-full border border-[#e8e4dc] bg-[#fafaf7] p-1">
           <button
             type="button"
-            className="rounded-full bg-white px-3 py-1 text-sm font-semibold text-[#2d5a3d] transition hover:bg-[#eef3e8]"
+            className="rounded-full bg-white px-3 py-1 text-sm font-semibold text-chocolate transition hover:bg-cream"
             onClick={() => setQuantity((current) => Math.max(1, current - 1))}
           >
             -
@@ -56,7 +56,7 @@ export default function AddToCartForm({ productId }: AddToCartFormProps) {
           <span className="min-w-8 text-center text-sm font-semibold text-[#1a1a1a]">{quantity}</span>
           <button
             type="button"
-            className="rounded-full bg-white px-3 py-1 text-sm font-semibold text-[#2d5a3d] transition hover:bg-[#eef3e8]"
+            className="rounded-full bg-white px-3 py-1 text-sm font-semibold text-chocolate transition hover:bg-cream"
             onClick={() => setQuantity((current) => current + 1)}
           >
             +
@@ -67,7 +67,7 @@ export default function AddToCartForm({ productId }: AddToCartFormProps) {
         type="button"
         onClick={addToCart}
         disabled={loading}
-        className="w-full rounded-3xl bg-[#2d5a3d] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#23472e] disabled:cursor-not-allowed disabled:bg-[#95a28f]"
+        className="w-full rounded-3xl bg-chocolate px-6 py-3 text-sm font-semibold text-white transition hover:bg-chocolate-dark disabled:cursor-not-allowed disabled:bg-[#95a28f]"
       >
         {loading ? content.adding.value : content.addToCart.value}
       </button>

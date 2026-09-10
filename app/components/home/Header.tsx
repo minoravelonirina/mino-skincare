@@ -71,10 +71,10 @@ export default function Header({ content }: { content: any }) {
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 sm:px-6 lg:px-8">
         <Link href={`/${locale}`} className="group relative z-10 flex items-center gap-1">
-          <span className="font-serif text-[22px] font-semibold tracking-tight text-[#2d5a3d] transition-colors duration-300 group-hover:text-[#1e3d2a]">
+          <span className="font-serif text-[22px] font-semibold tracking-tight text-chocolate transition-colors duration-300 group-hover:text-terracotta">
             Mino
           </span>
-          <span className="font-serif text-[22px] font-light italic tracking-tight text-[#8BAF7C] transition-colors duration-300 group-hover:text-[#6d9460]">
+          <span className="font-serif text-[22px] font-light italic tracking-tight text-beige transition-colors duration-300 group-hover:text-honey">
             Skincare
           </span>
         </Link>
@@ -89,7 +89,7 @@ export default function Header({ content }: { content: any }) {
             <Link
               key={item.href}
               href={item.href}
-              className="relative px-4 py-2 text-[13px] font-medium tracking-wide text-[#555] transition-colors duration-300 hover:text-[#2d5a3d] after:absolute after:bottom-1 after:left-4 after:right-4 after:h-px after:origin-left after:scale-x-0 after:bg-[#2d5a3d] after:transition-transform after:duration-300 hover:after:scale-x-100"
+              className="relative px-4 py-2 text-[13px] font-medium tracking-wide text-[#555] transition-colors duration-300 hover:text-chocolate after:absolute after:bottom-1 after:left-4 after:right-4 after:h-px after:origin-left after:scale-x-0 after:bg-chocolate after:transition-transform after:duration-300 hover:after:scale-x-100"
             >
               {item.label}
             </Link>
@@ -102,13 +102,13 @@ export default function Header({ content }: { content: any }) {
             <div className="mx-1 h-4 w-px bg-[#e0ddd5]" />
             <Link
               href={`/${locale}/login`}
-              className="px-4 py-2 text-[13px] font-medium tracking-wide transition-colors duration-300 hover:text-[#2d5a3d]"
+              className="px-4 py-2 text-[13px] font-medium tracking-wide transition-colors duration-300 hover:text-chocolate"
             >
               {login}
             </Link>
             <Link
               href={`/${locale}/cart`}
-              className="group relative flex items-center gap-2 rounded-full bg-[#2d5a3d] px-5 py-2.5 text-[13px] font-medium text-white transition-all duration-300 hover:bg-[#1e3d2a] hover:shadow-lg hover:shadow-[#2d5a3d]/20"
+              className="group relative flex items-center gap-2 rounded-full bg-chocolate px-5 py-2.5 text-[13px] font-medium text-white transition-all duration-300 hover:bg-terracotta hover:shadow-lg hover:shadow-chocolate/20"
             >
               {cart}
               <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-[10px] font-semibold transition-colors duration-300 group-hover:bg-white/30">
@@ -126,17 +126,17 @@ export default function Header({ content }: { content: any }) {
             <span className="sr-only">Toggle menu</span>
             <div className="flex h-5 w-5 flex-col items-center justify-center gap-1.5">
               <span
-                className={`block h-px w-5 bg-[#2d5a3d] transition-all duration-300 ${
+                className={`block h-px w-5 bg-chocolate transition-all duration-300 ${
                   open ? "translate-y-[3.5px] rotate-45" : ""
                 }`}
               />
               <span
-                className={`block h-px w-5 bg-[#2d5a3d] transition-all duration-300 ${
+                className={`block h-px w-5 bg-chocolate transition-all duration-300 ${
                   open ? "opacity-0" : ""
                 }`}
               />
               <span
-                className={`block h-px w-5 bg-[#2d5a3d] transition-all duration-300 ${
+                className={`block h-px w-5 bg-chocolate transition-all duration-300 ${
                   open ? "-translate-y-[3.5px] -rotate-45" : ""
                 }`}
               />
@@ -163,13 +163,13 @@ export default function Header({ content }: { content: any }) {
         >
           <div className="flex items-center justify-between px-6 pt-5 pb-4">
             <Link href={`/${locale}`} className="flex items-center gap-1" onClick={() => setOpen(false)}>
-              <span className="font-serif text-lg font-semibold text-[#2d5a3d]">Mino</span>
-              <span className="font-serif text-lg font-light italic text-[#8BAF7C]">Skincare</span>
+              <span className="font-serif text-lg font-semibold text-chocolate">Mino</span>
+              <span className="font-serif text-lg font-light italic text-beige">Skincare</span>
             </Link>
             <button
               aria-label="Close menu"
               onClick={() => setOpen(false)}
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f0ede6] text-[#2d5a3d] transition-colors duration-300 hover:bg-[#e4e0d8]"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f0ede6] text-chocolate transition-colors duration-300 hover:bg-[#e4e0d8]"
             >
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                 <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -188,7 +188,7 @@ export default function Header({ content }: { content: any }) {
                 key={item.href}
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className={`rounded-2xl px-5 py-3.5 text-[15px] font-medium text-[#1a1a1a] transition-all duration-300 hover:bg-[#eef3e8] hover:text-[#2d5a3d] ${
+                className={`rounded-2xl px-5 py-3.5 text-[15px] font-medium text-[#1a1a1a] transition-all duration-300 hover:bg-cream hover:text-chocolate ${
                   open ? "translate-x-0 opacity-100" : "translate-x-4 opacity-0"
                 }`}
                 style={{ transitionDelay: open ? `${100 + i * 50}ms` : "0ms" }}
@@ -210,14 +210,14 @@ export default function Header({ content }: { content: any }) {
             <Link
               href={`/${locale}/login`}
               onClick={() => setOpen(false)}
-              className="rounded-2xl border border-[#e0ddd5] bg-white px-5 py-3.5 text-center text-[15px] font-medium text-[#2d5a3d] transition-all duration-300 hover:border-[#2d5a3d]"
+              className="rounded-2xl border border-[#e0ddd5] bg-white px-5 py-3.5 text-center text-[15px] font-medium text-chocolate transition-all duration-300 hover:border-chocolate"
             >
               {login}
             </Link>
             <Link
               href={`/${locale}/cart`}
               onClick={() => setOpen(false)}
-              className="rounded-2xl bg-[#2d5a3d] px-5 py-3.5 text-center text-[15px] font-medium text-white transition-all duration-300 hover:bg-[#1e3d2a]"
+              className="rounded-2xl bg-chocolate px-5 py-3.5 text-center text-[15px] font-medium text-white transition-all duration-300 hover:bg-terracotta"
             >
               {cart}
             </Link>

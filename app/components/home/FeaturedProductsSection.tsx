@@ -23,7 +23,7 @@ export default function FeaturedProductsSection({ products, content }: { product
         <div className="mt-12 flex justify-center">
           <Link
             href={`/${locale}/catalogue`}
-            className="group inline-flex items-center gap-3 rounded-full border border-[#e0ddd5] bg-white px-8 py-4 text-[14px] font-medium text-[#2d5a3d] transition-all duration-300 hover:border-[#2d5a3d] hover:shadow-lg hover:shadow-[#2d5a3d]/10"
+            className="group inline-flex items-center gap-3 rounded-full border border-[#e0ddd5] bg-white px-8 py-4 text-[14px] font-medium text-chocolate transition-all duration-300 hover:border-chocolate hover:shadow-lg hover:shadow-chocolate/10"
           >
             {seeAll}
             <svg

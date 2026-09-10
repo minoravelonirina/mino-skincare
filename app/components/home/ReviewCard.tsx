@@ -2,7 +2,7 @@ export default function ReviewCard({ review, content }: { review: any; content: 
   const initials = `${review.user?.firstName?.charAt(0) ?? ""}${review.user?.lastName?.charAt(0) ?? ""}`;
 
   return (
-    <article className="group relative overflow-hidden rounded-3xl bg-white p-6 ring-1 ring-[#e8e4dc] transition-all duration-500 hover:ring-[#2d5a3d]/30 hover:shadow-xl hover:shadow-[#2d5a3d]/5">
+    <article className="group relative overflow-hidden rounded-3xl bg-white p-6 ring-1 ring-[#e8e4dc] transition-all duration-500 hover:ring-chocolate/30 hover:shadow-xl hover:shadow-chocolate/5">
       <div className="mb-4 flex items-center gap-1">
         {[1, 2, 3, 4, 5].map((star) => (
           <svg
@@ -29,7 +29,7 @@ export default function ReviewCard({ review, content }: { review: any; content: 
       )}
       
       <div className="flex items-center gap-3 border-t border-[#f0ede6] pt-5">
-        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-[#eef3e8] to-[#f5ede4] text-[13px] font-semibold text-[#2d5a3d]">
+        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-cream to-[#f5ede4] text-[13px] font-semibold text-chocolate">
           {initials || "MS"}
         </div>
         <div>

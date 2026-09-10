@@ -24,12 +24,12 @@ export default function CategoriesSection({ categories, content }: { categories:
 
             return (
               <Link key={category.id} href={`/${locale}/catalogue?category=${category.slug}`}>
-                <article className="group relative overflow-hidden rounded-3xl bg-white p-6 ring-1 ring-[#e8e4dc] transition-all duration-500 hover:ring-[#2d5a3d]/30 hover:shadow-xl hover:shadow-[#2d5a3d]/5">
-                  <div className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#2d5a3d]/5 text-[11px] font-bold text-[#2d5a3d] transition-all duration-500 group-hover:bg-[#2d5a3d] group-hover:text-white">
+                <article className="group relative overflow-hidden rounded-3xl bg-white p-6 ring-1 ring-[#e8e4dc] transition-all duration-500 hover:ring-chocolate/30 hover:shadow-xl hover:shadow-chocolate/5">
+                  <div className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-chocolate/5 text-[11px] font-bold text-chocolate transition-all duration-500 group-hover:bg-chocolate group-hover:text-white">
                     {visual.label}
                   </div>
                   
-                  <h3 className="text-[17px] font-semibold text-[#1a1a1a] transition-colors duration-300 group-hover:text-[#2d5a3d]">
+                  <h3 className="text-[17px] font-semibold text-[#1a1a1a] transition-colors duration-300 group-hover:text-chocolate">
                     {category.name}
                   </h3>
                   
@@ -43,7 +43,7 @@ export default function CategoriesSection({ categories, content }: { categories:
                     <span className="text-[12px] font-medium text-[#aaa]">
                       {category._count.products} {productLabel}
                     </span>
-                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#f8f6f3] text-[#2d5a3d] transition-all duration-300 group-hover:bg-[#2d5a3d] group-hover:text-white">
+                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#f8f6f3] text-chocolate transition-all duration-300 group-hover:bg-chocolate group-hover:text-white">
                       <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
                         <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>

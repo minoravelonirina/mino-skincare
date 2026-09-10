@@ -6,6 +6,7 @@ import { getLocale } from 'next-intlayer/server'
 import { getCurrentUserFromCookies } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { getProductImage, placeholderProductImage, formatPrice } from '@/lib/home'
+import StoreUnavailable from '@/app/components/StoreUnavailable'
 
 interface CartItem {
   id: number
@@ -23,12 +24,19 @@ export default async function CartPage() {
   const content = getIntlayer("cart", locale).cart
   const user = await getCurrentUserFromCookies()
   if (!user) redirect(`/${locale}/login`)
-  const cartItems = await prisma.cartItem.findMany({
-    where: { userId: user.userId },
-    include: {
-      product: true,
-    },
-  })
+
+  let cartItems: CartItem[] = []
+  try {
+    cartItems = await prisma.cartItem.findMany({
+      where: { userId: user.userId },
+      include: {
+        product: true,
+      },
+    })
+  } catch (err) {
+    console.error("Cart fetch failed:", err)
+    return <StoreUnavailable locale={locale} />
+  }
 
   const total = cartItems.reduce((sum, item) => sum + item.quantity * item.product.price, 0)
 
@@ -42,7 +50,7 @@ export default async function CartPage() {
           </div>
           <Link
             href={`/${locale}/catalogue`}
-            className="inline-flex items-center justify-center rounded-full border border-[#d8d4ca] bg-white px-5 py-3 text-sm font-semibold text-[#2d5a3d] transition hover:bg-[#eef3e8]"
+            className="inline-flex items-center justify-center rounded-full border border-[#d8d4ca] bg-white px-5 py-3 text-sm font-semibold text-chocolate transition hover:bg-cream"
           >
             {content.continueShopping}
           </Link>
@@ -54,7 +62,7 @@ export default async function CartPage() {
             <p className="mt-3 text-sm text-[#555]">{content.empty.description}</p>
             <Link
               href={`/${locale}/catalogue`}
-              className="mt-6 inline-flex rounded-full bg-[#2d5a3d] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#23472e]"
+              className="mt-6 inline-flex rounded-full bg-chocolate px-6 py-3 text-sm font-semibold text-white transition hover:bg-chocolate-dark"
             >
               {content.empty.cta}
             </Link>
@@ -65,7 +73,7 @@ export default async function CartPage() {
               {cartItems.map((item) => (
                 <div key={item.id} className="rounded-3xl bg-white p-6 shadow-sm">
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-                    <div className="relative flex h-28 w-28 items-center justify-center overflow-hidden rounded-3xl bg-[#eef3e8]">
+                    <div className="relative flex h-28 w-28 items-center justify-center overflow-hidden rounded-3xl bg-cream">
                       <Image
                         src={getProductImage(item.product.images) ?? placeholderProductImage}
                         alt={item.product.name}
@@ -79,7 +87,7 @@ export default async function CartPage() {
                       <p className="mt-2 text-sm text-[#555]">{content.quantity} : {item.quantity}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-base font-semibold text-[#2d5a3d]">{formatPrice(item.product.price)}</p>
+                      <p className="text-base font-semibold text-chocolate">{formatPrice(item.product.price)}</p>
                       <p className="text-sm text-[#999]">{content.total} : {formatPrice(item.product.price * item.quantity)}</p>
                     </div>
                   </div>
@@ -107,7 +115,7 @@ export default async function CartPage() {
                 </div>
                 <Link
                   href={`/${locale}/checkout`}
-                  className="block rounded-3xl bg-[#2d5a3d] px-6 py-3 text-center text-sm font-semibold text-white transition hover:bg-[#23472e]"
+                  className="block rounded-3xl bg-chocolate px-6 py-3 text-center text-sm font-semibold text-white transition hover:bg-chocolate-dark"
                 >
                   {content.checkout}
                 </Link>

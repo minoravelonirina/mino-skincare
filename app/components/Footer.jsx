@@ -3,7 +3,7 @@ export default function Footer() {
         <footer className="bg-[#1a1a1a] text-[#ccc]">
         <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[1.6fr_1fr_1fr_1fr] lg:px-8">
           <div>
-            <div className="font-serif text-2xl text-[#8BAF7C]">Mino Skincare</div>
+            <div className="font-serif text-2xl text-beige">Mino Skincare</div>
             <p className="mt-4 text-sm leading-7 text-[#999]">
               Boutique de cosmétiques naturels, mêlant nos produits maison et une sélection de marques partenaires pour une routine de beauté complète.
             </p>

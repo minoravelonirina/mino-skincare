@@ -1,9 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getLocaleFromPath } from "intlayer";
 
-export default function HeroSection({ content }: { content: any }) {
-  const locale = getLocaleFromPath()
+export default function HeroSection({ content, locale }: { content: any; locale: string }) {
   const eyebrow = content.eyebrow ?? "Mino Skincare";
   const titleStart = content.titleStart ?? content.title ?? "Skincare";
   const titleAccent = content.titleAccent ?? "";

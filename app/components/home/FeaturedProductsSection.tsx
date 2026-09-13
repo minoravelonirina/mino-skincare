@@ -1,10 +1,8 @@
 import Link from "next/link";
 import SectionHeader from "./SectionHeader";
 import ProductCard from "./ProductCard";
-import { getLocaleFromPath } from "intlayer";
 
-export default function FeaturedProductsSection({ products, content }: { products: any[]; content: any }) {
-  const locale = getLocaleFromPath()
+export default function FeaturedProductsSection({ products, content, locale }: { products: any[]; content: any; locale: string }) {
   const title = content.title ?? content.heading ?? "Featured products";
   const description = content.description ?? content.subtitle ?? "";
   const seeAll = content.seeAll ?? content.cta ?? "See all";
@@ -14,9 +12,9 @@ export default function FeaturedProductsSection({ products, content }: { product
       <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 sm:py-28 lg:px-8">
         <SectionHeader eyebrow="Featured" title={title} description={description} />
 
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+<div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {products.map((product) => (
-            <ProductCard key={product.id} product={product} saleBadge={content.saleBadge} showCompareAtPrice viewDetails={content.viewDetails} inStock={content.inStock} outOfStock={content.outOfStock} />
+            <ProductCard key={product.id} product={product} locale={locale} saleBadge={content.saleBadge} showCompareAtPrice viewDetails={content.viewDetails} inStock={content.inStock} outOfStock={content.outOfStock} />
           ))}
         </div>
 

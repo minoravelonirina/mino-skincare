@@ -40,11 +40,11 @@ export default async function Home() {
 
   return (
     <main className="bg-[#fde8e8] text-[#1a1a1a] antialiased">
-      <HeroSection content={content.hero} />
+      <HeroSection content={content.hero} locale={locale} />
       <PromiseBar content={content.promises} />
-      <CategoriesSection categories={categories} content={content.categories} />
-      <FeaturedProductsSection products={featuredProducts} content={content.featuredProducts} />
-      <MoreProductsSection products={otherProducts} content={content.moreProducts} saleBadge={content.featuredProducts.saleBadge} />
+      <CategoriesSection categories={categories} content={content.categories} locale={locale} />
+      <FeaturedProductsSection products={featuredProducts} content={content.featuredProducts} locale={locale} />
+      <MoreProductsSection products={otherProducts} content={content.moreProducts} saleBadge={content.featuredProducts.saleBadge} locale={locale} />
       <TestimonialsSection reviews={reviews} content={content.testimonials} />
       <NewsletterSection content={content.newsletter} />
     </main>

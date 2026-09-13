@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { getIntlayer, getLocaleFromPath } from 'intlayer';
+import { getIntlayer } from 'intlayer';
+import { useLocale } from 'next-intlayer';
 import Link from 'next/link';
 import { UserData } from "../../../lib/types";
 
@@ -16,7 +17,7 @@ const navItems = [
 type ContentKeys = typeof navItems[number]['labelKey'];
 
 export default function DashboardPage() {
-  const locale = getLocaleFromPath();
+  const { locale } = useLocale();
   const content = getIntlayer("dashboard", locale)
   const router = useRouter();
   const [userData, setUserData] = useState<UserData | null>(null);

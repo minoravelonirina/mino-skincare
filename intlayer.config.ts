@@ -5,6 +5,9 @@ const config: IntlayerConfig = {
     locales: [Locales.ENGLISH, Locales.FRENCH],
     defaultLocale: Locales.FRENCH,
   },
+  routing: {
+    mode: "prefix-all",
+  },
   dictionary: {
     importMode: "dynamic",
   },

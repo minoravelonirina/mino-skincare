@@ -3,10 +3,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import LanguageSwitcher from "../LanguageSwitcher";
-import { getLocaleFromPath } from "intlayer";
+import { useLocale } from "next-intlayer";
 
 export default function Header({ content }: { content: any }) {
-  const locale = getLocaleFromPath()
+  const { locale } = useLocale();
   const showcase = content.showcase ?? content.home ?? "Home";
   const catalogue = content.catalogue ?? "Catalogue";
   const categories = content.categories ?? "Categories";

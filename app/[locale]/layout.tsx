@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { NextLayoutIntlayer } from "next-intlayer";
-import { getIntlayer } from "next-intlayer";
+import { getIntlayer, IntlayerClientProvider } from "next-intlayer";
 import { getLocale } from "next-intlayer/server";
 import SiteShell from "../components/SiteShell";
 
@@ -84,7 +84,7 @@ const LocaleLayout: NextLayoutIntlayer = async ({ children }) => {
 
   return (
     <SiteShell navigation={navigation}>
-      {children}
+      <IntlayerClientProvider locale={locale}>{children}</IntlayerClientProvider>
     </SiteShell>
   );
 };

@@ -1,10 +1,8 @@
 import Link from "next/link";
 import { categoryVisuals } from "@/lib/home";
-import { getLocaleFromPath } from "intlayer";
 import SectionHeader from "./SectionHeader";
 
-export default function CategoriesSection({ categories, content }: { categories: any[]; content: any }) {
-  const locale = getLocaleFromPath()
+export default function CategoriesSection({ categories, content, locale }: { categories: any[]; content: any; locale: string }) {
   const title = content.title ?? content.heading ?? "Shop by category";
   const description = content.description ?? content.subtitle ?? "";
   const productSingular = content.productSingular ?? "product";

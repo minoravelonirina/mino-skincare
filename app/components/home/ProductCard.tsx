@@ -1,9 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getCategoryVisual, formatPrice, getProductImage, placeholderProductImage } from "@/lib/home";
-import { getLocaleFromPath } from "intlayer";
-export default async function ProductCard({ product, saleBadge, showCompareAtPrice = false, variant = "default", viewDetails, inStock, outOfStock }: any) {
-  const locale = await getLocaleFromPath()
+export default async function ProductCard({ product, locale, saleBadge, showCompareAtPrice = false, variant = "default", viewDetails, inStock, outOfStock }: any) {
   const visual = getCategoryVisual(product.category?.name);
   const isCompact = variant === "compact";
 

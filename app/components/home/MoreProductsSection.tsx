@@ -1,7 +1,7 @@
 import ProductCard from "./ProductCard";
 import SectionHeader from "./SectionHeader";
 
-export default function MoreProductsSection({ products, content, saleBadge }: { products: any[]; content: any; saleBadge: any }) {
+export default function MoreProductsSection({ products, content, saleBadge, locale }: { products: any[]; content: any; saleBadge: any; locale: string }) {
   if (!products.length) return null;
 
   const title = content.title ?? content.heading ?? "Discover more";
@@ -17,7 +17,7 @@ export default function MoreProductsSection({ products, content, saleBadge }: { 
 
         <div className="mx-auto grid max-w-4xl gap-5 sm:grid-cols-2">
           {products.map((product) => (
-            <ProductCard key={product.id} product={product} saleBadge={saleBadge} variant="compact" viewDetails={viewDetails} inStock={inStock} outOfStock={outOfStock} />
+            <ProductCard key={product.id} product={product} locale={locale} saleBadge={saleBadge} variant="compact" viewDetails={viewDetails} inStock={inStock} outOfStock={outOfStock} />
           ))}
         </div>
       </div>

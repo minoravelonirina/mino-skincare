@@ -9,6 +9,7 @@ export interface User {
     lastName: string | null;
     password?: string;
     phone?: string | null;
+    profileImage?: string | null;
     role: UserRole;
     createdAt: Date;
 }
@@ -65,6 +66,9 @@ export interface UserData {
   userId: number;																	
   email: string;																	
   role: UserRole;																	
+  firstName?: string | null;																	
+  lastName?: string | null;																	
+  profileImage?: string | null;																	
 }
 
 export interface CataloguePageProps {

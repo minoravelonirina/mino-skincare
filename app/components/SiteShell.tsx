@@ -4,9 +4,9 @@ import { usePathname } from "next/navigation";
 import Header from "./home/Header";
 import Footer from "./Footer";
 
-const NO_NAV_PATHS = ["/login", "/register"];
+const NO_NAV_PATHS = ["/login", "/register", "/dashboard", "/profile", "/settings"];
 
-export default function SiteShell({ navigation, children }: { navigation: any; children: React.ReactNode }) {
+export default function SiteShell({ navigation, children }: { navigation: Record<string, string>; children: React.ReactNode }) {
   const pathname = usePathname();
   const showNav = !NO_NAV_PATHS.some((p) => pathname?.includes(p));
 

@@ -59,8 +59,14 @@ export async function getCurrentUser (request: NextRequest): Promise<JWTPayload 
     const cookieStore = await cookies();
     const token = cookieStore.get('accessToken')?.value || getTokenFromHeaders (request);
 
-    if (!token) return null;
-    return await verifyAccessToken(token);
+    if (token) {
+        const user = await verifyAccessToken(token);
+        if (user) return user;
+    }
+
+    const refreshToken = cookieStore.get('refreshToken')?.value;
+    if (!refreshToken) return null;
+    return await verifyRefreshToken(refreshToken);
 }
 
 export async function setAuthCookies(accessToken: string, refreshToken: string){
@@ -92,8 +98,15 @@ export async function clearAuthCookies() {
 export async function getCurrentUserFromCookies(): Promise<JWTPayload | null> {
     const cookieStore = await cookies();
     const token = cookieStore.get('accessToken')?.value;
-    if (!token) return null;
-    return await verifyAccessToken(token);
+
+    if (token) {
+        const user = await verifyAccessToken(token);
+        if (user) return user;
+    }
+
+    const refreshToken = cookieStore.get('refreshToken')?.value;
+    if (!refreshToken) return null;
+    return await verifyRefreshToken(refreshToken);
 }
 
 export async function requireAuth(request: NextRequest): Promise<JWTPayload | null> {

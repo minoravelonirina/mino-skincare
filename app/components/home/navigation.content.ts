@@ -11,8 +11,9 @@ const navigationContent = {
     reviews: t({ en: "Reviews", fr: "Avis" }),
     about: t({ en: "About", fr: "À propos" }),
     login: t({ en: "Login", fr: "Connexion" }),
-    cart: t({ en: "Cart", fr: "Panier" }),
     dashboard: t({ en: "Dashboard", fr: "Tableau de bord" }),
+    logout: t({ en: "Log out", fr: "Se déconnecter" }),
+    cart: t({ en: "Cart", fr: "Panier" }),
   },
 } satisfies Dictionary;
 

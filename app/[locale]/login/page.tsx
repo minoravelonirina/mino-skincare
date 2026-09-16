@@ -1,15 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
 import { AuthForm } from "../../components/auth-form";
 import { AuthContainer } from "../../components/auth-container";
 import { useIntlayer, useLocale } from "next-intlayer";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface LoginFormData {
   email: string;
   password: string;
+}
+
+function RegisteredNotice({ message }: { message: string }) {
+  const params = useSearchParams();
+  if (params.get("registered") !== "true" || !message) return null;
+
+  return (
+    <div className="mt-4 rounded-2xl bg-beige/20 p-3 text-center text-sm font-medium text-chocolate">
+      {message}
+    </div>
+  );
 }
 
 export default function LoginPage() {
@@ -19,7 +30,7 @@ export default function LoginPage() {
   const content = useIntlayer("auth");
   const router = useRouter();
 
-  const { title, subtitle, noAccount, signup, forgot, success, error } = content.login;
+  const { title, subtitle, noAccount, signup, forgot, success, error, registeredSuccess } = content.login;
 
   const handleLogin = async (data: LoginFormData) => {
     setIsLoading(true);
@@ -75,6 +86,10 @@ export default function LoginPage() {
             onSubmit={handleLogin}
           />
         </div>
+
+        <Suspense fallback={null}>
+          <RegisteredNotice message={registeredSuccess?.value ?? ""} />
+        </Suspense>
 
         {message && (
           <div className="mt-4 rounded-2xl bg-cream p-3 text-center text-sm font-medium text-chocolate">

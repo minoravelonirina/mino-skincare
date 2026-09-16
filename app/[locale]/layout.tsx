@@ -80,6 +80,7 @@ const LocaleLayout: NextLayoutIntlayer = async ({ children }) => {
     login: navigationSource.login,
     cart: navigationSource.cart,
     dashboard: navigationSource.dashboard,
+    logout: navigationSource.logout,
   } as Record<string, string>;
 
   return (

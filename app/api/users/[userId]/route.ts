@@ -28,6 +28,7 @@ export async function GET(
         firstName: true,
         lastName: true,
         phone: true,
+        profileImage: true,
         role: true,
         createdAt: true,
         updatedAt: true,
@@ -78,6 +79,7 @@ export async function PATCH(
         firstName: body.firstName,
         lastName: body.lastName,
         phone: body.phone,
+        profileImage: body.profileImage,
         role: body.role,
       },
       select: {
@@ -86,6 +88,7 @@ export async function PATCH(
         firstName: true,
         lastName: true,
         phone: true,
+        profileImage: true,
         role: true,
         createdAt: true,
         updatedAt: true,

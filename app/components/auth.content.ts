@@ -19,6 +19,10 @@ const authContent = {
       signup: t({ en: "Sign up", fr: "Créer un compte" }),
       success: t({ en: "Login successful!", fr: "Connexion réussie !" }),
       error: t({ en: "Login failed. Please try again.", fr: "Échec de la connexion. Veuillez réessayer." }),
+      registeredSuccess: t({
+        en: "Account created successfully! Please sign in to continue.",
+        fr: "Compte créé avec succès ! Connectez-vous pour continuer.",
+      }),
     },
     register: {
       title: t({ en: "Create an account", fr: "Créer un compte" }),

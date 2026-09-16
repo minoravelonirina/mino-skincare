@@ -8,6 +8,7 @@ import { getLocale } from "next-intlayer/server";
 import { CataloguePageProps, Product, Category} from "@/lib/types"
 import { getProductImage, placeholderProductImage, formatPrice } from "@/lib/home";
 import NewsletterSection from "@/app/components/home/NewsletterSection";
+import QuickAddToCart from "@/app/components/QuickAddToCart";
 import StoreUnavailable from "@/app/components/StoreUnavailable";
 
 function pathExists(src: string): boolean {
@@ -252,9 +253,7 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
                           </div>
                         )}
                       </div>
-                      <button className="rounded-xl bg-chocolate px-4 py-2 text-sm font-semibold text-white transition hover:bg-chocolate-dark group-hover:bg-chocolate-dark">
-                        {content.addToCart}
-                      </button>
+                      <QuickAddToCart productId={product.id} addLabel={content.addToCart} />
                     </div>
                   </div>
                 </article>

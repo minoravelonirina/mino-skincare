@@ -3,7 +3,6 @@ import prisma from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
 import { successResponse, errorResponse } from '@/app/api/utils/responses'
 import { validateEmail, validatePassword } from '@/app/api/utils/validation'
-import { generateAccessToken, generateRefreshToken } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
@@ -41,18 +40,8 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    const payload = {
-      userId: user.id,
-      email: user.email,
-      role: user.role,
-    }
-
-    const accessToken = await generateAccessToken(payload);
-    const refreshToken = await generateRefreshToken(payload);
-
-    const response = successResponse(
+    return successResponse(
       {
-        accessToken,
         user: {
           id: user.id,
           email: user.email,
@@ -61,29 +50,10 @@ export async function POST(request: NextRequest) {
           phone: user.phone,
           role: user.role,
         },
-        message: "Inscription reussi!"
+        message: "Inscription reussi!",
       },
       201
     )
-
-    // Définir les cookies sur la réponse
-    response.cookies.set('accessToken', accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 15,
-      path: '/'
-    });
-
-    response.cookies.set('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7,
-      path: '/'
-    });
-
-    return response;
   } catch (error) {
     return errorResponse(error as Error)
   }

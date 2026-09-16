@@ -2,22 +2,69 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { User } from "lucide-react";
 import LanguageSwitcher from "../LanguageSwitcher";
+import CartBadge from "../CartBadge";
 import { useLocale } from "next-intlayer";
 
-export default function Header({ content }: { content: any }) {
+export default function Header({ content }: { content: Record<string, string> }) {
   const { locale } = useLocale();
+  const router = useRouter();
   const showcase = content.showcase ?? content.home ?? "Home";
   const catalogue = content.catalogue ?? "Catalogue";
   const categories = content.categories ?? "Categories";
-  const reviews = content.reviews ?? "Reviews";
   const about = content.about ?? "About";
   const login = content.login ?? "Login";
   const cart = content.cart ?? "Cart";
+  const dashboard = content.dashboard ?? "Mon compte";
+  const logoutLabel = content.logout ?? "Se déconnecter";
 
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [session, setSession] = useState<{
+    authenticated: boolean;
+    profileImage?: string | null;
+  } | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
+
+  async function loadSession() {
+    try {
+      const res = await fetch("/api/users/me", { credentials: "include" });
+      if (res.status === 401) {
+        setSession({ authenticated: false });
+        return;
+      }
+      const json = await res.json();
+      if (json.success) {
+        setSession({
+          authenticated: true,
+          profileImage: json.data?.profileImage ?? null,
+        });
+      } else {
+        setSession({ authenticated: false });
+      }
+    } catch {
+      setSession({ authenticated: false });
+    }
+  }
+
+  useEffect(() => {
+    void Promise.resolve().then(loadSession);
+    window.addEventListener("profile-image-updated", loadSession);
+    return () => window.removeEventListener("profile-image-updated", loadSession);
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+    setSession({ authenticated: false });
+    router.refresh();
+  };
 
   useEffect(() => {
     function onScroll() {
@@ -100,20 +147,48 @@ export default function Header({ content }: { content: any }) {
           <div className="hidden md:flex items-center gap-2">
             <LanguageSwitcher />
             <div className="mx-1 h-4 w-px bg-[#e0ddd5]" />
-            <Link
-              href={`/${locale}/login`}
-              className="px-4 py-2 text-[13px] font-medium tracking-wide transition-colors duration-300 hover:text-chocolate"
-            >
-              {login}
-            </Link>
+            {session?.authenticated ? (
+              <>
+                <Link
+                  href={`/${locale}/dashboard`}
+                  aria-label={dashboard}
+                  title={dashboard}
+                  className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-[#e0ddd5] bg-white text-chocolate transition-all duration-300 hover:border-chocolate hover:shadow-md"
+                >
+                  {session.profileImage ? (
+                    <Image
+                      src={session.profileImage}
+                      alt={dashboard}
+                      width={40}
+                      height={40}
+                      unoptimized
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <User size={18} />
+                  )}
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="rounded-full border border-[#e0ddd5] bg-white px-5 py-2.5 text-[13px] font-medium text-chocolate transition-all duration-300 hover:border-chocolate hover:bg-cream"
+                >
+                  {logoutLabel}
+                </button>
+              </>
+            ) : (
+              <Link
+                href={`/${locale}/login`}
+                className="px-4 py-2 text-[13px] font-medium tracking-wide transition-colors duration-300 hover:text-chocolate"
+              >
+                {login}
+              </Link>
+            )}
             <Link
               href={`/${locale}/cart`}
               className="group relative flex items-center gap-2 rounded-full bg-chocolate px-5 py-2.5 text-[13px] font-medium text-white transition-all duration-300 hover:bg-terracotta hover:shadow-lg hover:shadow-chocolate/20"
             >
               {cart}
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-[10px] font-semibold transition-colors duration-300 group-hover:bg-white/30">
-                3
-              </span>
+              <CartBadge />
             </Link>
           </div>
 
@@ -207,13 +282,34 @@ export default function Header({ content }: { content: any }) {
             <div className="px-2">
               <LanguageSwitcher />
             </div>
-            <Link
-              href={`/${locale}/login`}
-              onClick={() => setOpen(false)}
-              className="rounded-2xl border border-[#e0ddd5] bg-white px-5 py-3.5 text-center text-[15px] font-medium text-chocolate transition-all duration-300 hover:border-chocolate"
-            >
-              {login}
-            </Link>
+            {session?.authenticated ? (
+              <>
+                <Link
+                  href={`/${locale}/dashboard`}
+                  onClick={() => setOpen(false)}
+                  className="rounded-2xl border border-[#e0ddd5] bg-white px-5 py-3.5 text-center text-[15px] font-medium text-chocolate transition-all duration-300 hover:border-chocolate"
+                >
+                  {dashboard}
+                </Link>
+                <button
+                  onClick={() => {
+                    setOpen(false);
+                    handleLogout();
+                  }}
+                  className="rounded-2xl border border-[#e0ddd5] bg-white px-5 py-3.5 text-center text-[15px] font-medium text-[#555] transition-all duration-300 hover:border-terracotta hover:text-terracotta"
+                >
+                  {logoutLabel}
+                </button>
+              </>
+            ) : (
+              <Link
+                href={`/${locale}/login`}
+                onClick={() => setOpen(false)}
+                className="rounded-2xl border border-[#e0ddd5] bg-white px-5 py-3.5 text-center text-[15px] font-medium text-chocolate transition-all duration-300 hover:border-chocolate"
+              >
+                {login}
+              </Link>
+            )}
             <Link
               href={`/${locale}/cart`}
               onClick={() => setOpen(false)}

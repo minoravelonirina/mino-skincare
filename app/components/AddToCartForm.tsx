@@ -1,11 +1,14 @@
 "use client"
 
 import { useState } from "react"
-import { useIntlayer } from "next-intlayer"
+import { useRouter } from "next/navigation"
+import { useIntlayer, useLocale } from "next-intlayer"
 import { AddToCartFormProps } from "../../lib/types"
 
 export default function AddToCartForm({ productId }: AddToCartFormProps) {
   const content = useIntlayer("catalogue").addToCartForm
+  const { locale } = useLocale()
+  const router = useRouter()
   const [quantity, setQuantity] = useState(1)
   const [status, setStatus] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -26,12 +29,18 @@ export default function AddToCartForm({ productId }: AddToCartFormProps) {
         }),
       })
 
+      if (response.status === 401) {
+        router.push(`/${locale}/login`)
+        return
+      }
+
       if (!response.ok) {
         const error = await response.json()
-        throw new Error(error.message || content.error.value)
+        throw new Error(error.error || content.error.value)
       }
 
       setStatus(content.added.value)
+      window.dispatchEvent(new CustomEvent("cart-updated"))
     } catch (error) {
       setStatus((error as Error).message)
     } finally {

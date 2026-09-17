@@ -3,7 +3,7 @@ import prisma from '@/lib/prisma'
 import { successResponse, errorResponse } from '@/app/api/utils/responses'
 import { getCurrentUserFromCookies } from '@/lib/auth'
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const user = await getCurrentUserFromCookies()
     if (!user) {
@@ -32,59 +32,43 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json()
 
-    if (!body.productId || !body.quantity) {
-      return errorResponse('productId et quantity sont requis', 400)
+    const productId = Number(body.productId)
+    const quantity = Number(body.quantity)
+
+    if (!Number.isInteger(productId) || productId <= 0 || !Number.isInteger(quantity) || quantity <= 0) {
+      return errorResponse('productId et quantity doivent être des entiers positifs', 400)
     }
 
     // Vérifier que le produit existe
     const product = await prisma.product.findUnique({
-      where: { id: body.productId },
+      where: { id: productId },
     })
 
     if (!product) {
       return errorResponse('Produit non trouvé', 404)
     }
 
-    // Vérifier s'il existe déjà dans le panier
-    const existingItem = await prisma.cartItem.findUnique({
+    // Upsert atomique (contrainte unique userId_productId) :
+    // accroît la quantité si déjà présent, sinon crée la ligne. Aucune course possible.
+    const cartItem = await prisma.cartItem.upsert({
       where: {
         userId_productId: {
           userId: user.userId,
-          productId: body.productId,
+          productId,
         },
       },
+      update: {
+        quantity: { increment: quantity },
+      },
+      create: {
+        userId: user.userId,
+        productId,
+        quantity,
+      },
+      include: {
+        product: true,
+      },
     })
-
-    let cartItem
-    if (existingItem) {
-      // Mettre à jour la quantité
-      cartItem = await prisma.cartItem.update({
-        where: {
-          userId_productId: {
-            userId: user.userId,
-            productId: body.productId,
-          },
-        },
-        data: {
-          quantity: existingItem.quantity + body.quantity,
-        },
-        include: {
-          product: true,
-        },
-      })
-    } else {
-      // Créer un nouvel item
-      cartItem = await prisma.cartItem.create({
-        data: {
-          userId: user.userId,
-          productId: body.productId,
-          quantity: body.quantity,
-        },
-        include: {
-          product: true,
-        },
-      })
-    }
 
     return successResponse(cartItem, 201)
   } catch (error) {

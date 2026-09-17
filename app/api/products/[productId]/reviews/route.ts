@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server'
 import prisma from '@/lib/prisma'
 import { successResponse, errorResponse, notFoundResponse } from '@/app/api/utils/responses'
 import { getCurrentUserFromCookies } from '@/lib/auth'
+import { parsePositiveInt } from '@/app/api/utils/validation'
 
 export async function GET(
   request: NextRequest,
@@ -9,11 +10,14 @@ export async function GET(
 ) {
   try {
     const { productId } = await params
-    // const id = parseInt(productId)
+    const id = parsePositiveInt(productId)
+    if (!id) {
+      return errorResponse('id invalide', 400)
+    }
 
     // Vérifier que le produit existe
     const product = await prisma.product.findUnique({
-      where: { id: parseInt(productId) },
+      where: { id },
     })
 
     if (!product) {
@@ -21,7 +25,7 @@ export async function GET(
     }
 
     const reviews = await prisma.review.findMany({
-      where: { id: parseInt(productId) },
+      where: { productId: id },
       include: {
         user: {
           select: {
@@ -48,7 +52,10 @@ export async function POST(
 ) {
   try {
     const { productId } = await params
-    const id = parseInt(productId)
+    const id = parsePositiveInt(productId)
+    if (!id) {
+      return errorResponse('id invalide', 400)
+    }
     const body = await request.json()
 
     const user = await getCurrentUserFromCookies()
@@ -66,7 +73,7 @@ export async function POST(
 
     // Vérifier que le produit existe
     const product = await prisma.product.findUnique({
-      where: { id: parseInt(productId) },
+      where: { id },
     })
 
     if (!product) {
@@ -85,11 +92,11 @@ export async function POST(
     const review = await prisma.review.create({
       data: {
         userId: user.userId,
-        productId: parseInt(productId),
+        productId: id,
         rating: body.rating,
         title: body.title,
         comment: body.comment,
-        isVerified: body.isVerified || false,
+        isVerified: false,
       },
       include: {
         user: {

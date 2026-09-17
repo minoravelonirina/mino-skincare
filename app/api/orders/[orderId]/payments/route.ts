@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server'
 import prisma from '@/lib/prisma'
 import { successResponse, errorResponse, notFoundResponse, ApiError, forbiddenResponse } from '@/app/api/utils/responses'
-import { requireAuth, requireAdmin } from '@/lib/auth'
+import { requireAuth } from '@/lib/auth'
 
 // GET all payments for an order
 export async function GET(

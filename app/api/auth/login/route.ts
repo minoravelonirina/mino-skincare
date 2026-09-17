@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
 import prisma from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
 import { successResponse, errorResponse } from '@/app/api/utils/responses'
-import { validateEmail, validatePassword } from '@/app/api/utils/validation'
+import { validateEmail } from '@/app/api/utils/validation'
 import { generateAccessToken, generateRefreshToken } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {

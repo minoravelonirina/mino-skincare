@@ -12,6 +12,13 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Generated / non-author code that must not be linted:
+    ".intlayer/**",
+    "app/generated/**",
+    "generated/**",
+    "client/**",
+    "server/**",
+    "dev-server.log",
   ]),
 ]);
 

@@ -6,7 +6,7 @@ import { requireAuth, requireAdmin } from '@/lib/auth'
 // GET single shipment
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ orderId: string; shipmentId: string }> }
+  { params }: { params: Promise<{ shipmentId: string }> }
 ) {
   try {
     const user = await requireAuth(request)
@@ -14,7 +14,7 @@ export async function GET(
       return errorResponse('Non authentifié', 401)
     }
 
-    const { shipmentId, orderId } = await params
+    const { shipmentId } = await params
     const id = parseInt(shipmentId)
 
     const shipment = await prisma.shipment.findUnique({
@@ -39,7 +39,7 @@ export async function GET(
 // PATCH update shipment
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ orderId: string; shipmentId: string }> }
+  { params }: { params: Promise<{ shipmentId: string }> }
 ) {
   try {
     const user = await requireAdmin(request)
@@ -47,7 +47,7 @@ export async function PATCH(
       return errorResponse('Non autorisé', 403)
     }
 
-    const { shipmentId, orderId } = await params
+    const { shipmentId } = await params
     const id = parseInt(shipmentId)
     const body = await request.json()
 
@@ -87,7 +87,7 @@ export async function PATCH(
 // DELETE shipment
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ orderId: string; shipmentId: string }> }
+  { params }: { params: Promise<{ shipmentId: string }> }
 ) {
   try {
     const user = await requireAdmin(request)
@@ -95,7 +95,7 @@ export async function DELETE(
       return errorResponse('Non autorisé', 403)
     }
 
-    const { shipmentId, orderId } = await params
+    const { shipmentId } = await params
     const id = parseInt(shipmentId)
 
     const shipment = await prisma.shipment.findUnique({

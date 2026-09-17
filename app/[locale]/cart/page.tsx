@@ -6,6 +6,7 @@ import { getLocale } from 'next-intlayer/server'
 import { getCurrentUserFromCookies } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { getProductImage, placeholderProductImage, formatPrice } from '@/lib/home'
+import { computeOrderTotals } from '@/lib/pricing'
 import StoreUnavailable from '@/app/components/StoreUnavailable'
 
 interface CartItem {
@@ -38,7 +39,8 @@ export default async function CartPage() {
     return <StoreUnavailable locale={locale} />
   }
 
-  const total = cartItems.reduce((sum, item) => sum + item.quantity * item.product.price, 0)
+  const subtotal = cartItems.reduce((sum, item) => sum + item.quantity * item.product.price, 0)
+  const { shippingAmount, taxAmount, totalAmount } = computeOrderTotals(subtotal)
 
   return (
     <main className="bg-[#FAFAF7] text-[#1a1a1a] antialiased">
@@ -99,19 +101,19 @@ export default async function CartPage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between text-sm text-[#555]">
                   <span>{content.subtotal}</span>
-                  <span>{formatPrice(total)}</span>
+                  <span>{formatPrice(subtotal)}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm text-[#555]">
                   <span>{content.shipping}</span>
-                  <span>{formatPrice(12000)}</span>
+                  <span>{formatPrice(shippingAmount)}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm text-[#555]">
                   <span>{content.tax}</span>
-                  <span>{formatPrice(Math.round(total * 0.1))}</span>
+                  <span>{formatPrice(taxAmount)}</span>
                 </div>
                 <div className="border-t border-[#e8e4dc] pt-4 text-lg font-semibold text-[#1a1a1a]">
                   {content.orderTotal}
-                  <span className="float-right">{formatPrice(total + 12000 + Math.round(total * 0.1))}</span>
+                  <span className="float-right">{formatPrice(totalAmount)}</span>
                 </div>
                 <Link
                   href={`/${locale}/checkout`}

@@ -42,6 +42,49 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+  /auth/refresh:
+    post:
+      summary: Rafraîchir la session (cookie refreshToken)
+      description: Renouvelle la paire de jetons et réémet les cookies si le refresh token fourni est valide.
+      tags:
+        - auth
+      responses:
+        '200':
+          description: Session rafraîchie
+        '401':
+          description: Refresh token invalide ou expiré
+  /auth/logout:
+    post:
+      summary: Déconnexion
+      description: Vide les cookies d'authentification.
+      tags:
+        - auth
+      responses:
+        '200':
+          description: Déconnecté
+  /protected:
+    get:
+      summary: Données de session courante
+      description: Renvoie l'utilisateur courant (via cookie ou header Authorization) et des informations protégées.
+      tags:
+        - auth
+      responses:
+        '200':
+          description: Session valide
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  secretInfo:
+                    type: string
+                  timestamp:
+                    type: string
+                    format: date-time
+        '401':
+          description: Non authentifié
   /products:
     get:
       summary: Liste des produits
@@ -293,6 +336,21 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/User'
+  /users/me:
+    get:
+      summary: Profil de l'utilisateur courant
+      description: Renvoie l'utilisateur connecté identifié par ses cookies.
+      tags:
+        - users
+      responses:
+        '200':
+          description: Utilisateur courant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Non authentifié
   /users/{userId}:
     get:
       summary: Détails d'un utilisateur
@@ -1062,8 +1120,6 @@ components:
           type: string
         phone:
           type: string
-        role:
-          type: string
     LoginRequest:
       type: object
       required:
@@ -1249,22 +1305,33 @@ components:
           format: date-time
     OrderCreate:
       type: object
+      description: >
+        L'utilisateur est déduit de la session. Les prix, taxes et frais de
+        livraison sont TOUJOURS calculés côté serveur depuis la base : ils ne
+        doivent pas être envoyés par le client.
       required:
-        - userId
         - orderItems
       properties:
-        userId:
-          type: integer
         orderItems:
           type: array
           items:
-            $ref: '#/components/schemas/OrderItem'
+            $ref: '#/components/schemas/OrderItemCreate'
         billingAddress:
           $ref: '#/components/schemas/AddressCreate'
         shippingAddress:
           $ref: '#/components/schemas/AddressCreate'
         notes:
           type: string
+    OrderItemCreate:
+      type: object
+      required:
+        - productId
+        - quantity
+      properties:
+        productId:
+          type: integer
+        quantity:
+          type: integer
     OrderStatusUpdate:
       type: object
       required:

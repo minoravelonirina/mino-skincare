@@ -75,6 +75,7 @@ export interface CataloguePageProps {
   searchParams: Promise<{
     search?: string;
     category?: string;
+    sort?: string;
   }>;
 }
 
@@ -106,3 +107,8 @@ export interface Category {
     products: number;
   };
 }
+
+export type LocalizedContent = Record<string, string | string[] | undefined>;
+
+export const asString = (value: string | string[] | undefined): string | undefined =>
+  typeof value === 'string' ? value : undefined;

@@ -1,7 +1,9 @@
 import ProductCard from "./ProductCard";
 import SectionHeader from "./SectionHeader";
+import type { ProductWithRelations } from "@/lib/home";
+import type { LocalizedContent } from "@/lib/types";
 
-export default function MoreProductsSection({ products, content, saleBadge, locale }: { products: any[]; content: any; saleBadge: any; locale: string }) {
+export default function MoreProductsSection({ products, content, saleBadge, locale }: { products: ProductWithRelations[]; content: LocalizedContent; saleBadge?: string; locale: string }) {
   if (!products.length) return null;
 
   const title = content.title ?? content.heading ?? "Discover more";

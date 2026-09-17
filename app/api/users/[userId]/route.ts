@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server'
 import prisma from '@/lib/prisma'
 import { successResponse, errorResponse, notFoundResponse, forbiddenResponse } from '@/app/api/utils/responses'
 import { requireAuth } from '@/lib/auth'
+import { parsePositiveInt } from '@/app/api/utils/validation'
 
 export async function GET(
   request: NextRequest,
@@ -57,7 +58,10 @@ export async function PATCH(
     }
 
     const { userId } = await params
-    const id = parseInt(userId)
+    const id = parsePositiveInt(userId)
+    if (!id) {
+      return errorResponse('id invalide', 400)
+    }
 
     if (authUser.userId !== id && authUser.role !== 'ADMIN') {
       return forbiddenResponse()
@@ -73,6 +77,9 @@ export async function PATCH(
       return notFoundResponse('Utilisateur')
     }
 
+    const isAdmin = authUser.role === 'ADMIN'
+    const role = isAdmin ? body.role ?? user.role : user.role
+
     const updatedUser = await prisma.user.update({
       where: { id },
       data: {
@@ -80,7 +87,7 @@ export async function PATCH(
         lastName: body.lastName,
         phone: body.phone,
         profileImage: body.profileImage,
-        role: body.role,
+        role,
       },
       select: {
         id: true,

@@ -2,9 +2,16 @@ import { NextRequest } from 'next/server'
 import prisma from '@/lib/prisma'
 import { successResponse, errorResponse } from '@/app/api/utils/responses'
 import { getCurrentUserFromCookies } from '@/lib/auth'
+import { computeOrderTotals } from '@/lib/pricing'
+
+function insufficientStockError(productId: number): Error & { code: string } {
+  const error = new Error(`Stock insuffisant pour le produit n°${productId}`) as Error & { code: string }
+  error.code = 'INSUFFICIENT_STOCK'
+  return error
+}
 
 // Générer un numéro de commande unique
-export async function generateOrderNumber(): Promise<string> {
+async function generateOrderNumber(): Promise<string> {
   const date = new Date()
   const timestamp = date.getTime()
   const random = Math.floor(Math.random() * 1000)
@@ -13,7 +20,7 @@ export async function generateOrderNumber(): Promise<string> {
     .padStart(2, '0')}${date.getDate().toString().padStart(2, '0')}-${timestamp}-${random}`
 }
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const user = await getCurrentUserFromCookies()
     if (!user) {
@@ -51,63 +58,106 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json()
 
-    if (!body.orderItems || body.orderItems.length === 0) {
+    if (!Array.isArray(body.orderItems) || body.orderItems.length === 0) {
       return errorResponse(
         'orderItems (non vide) est requis',
         400
       )
     }
 
-    // Calculer le total
-    let totalAmount = 0
-    for (const item of body.orderItems) {
-      totalAmount += (item.price || 0) * item.quantity
+    const requestedItems: { productId: number; quantity: number }[] = body.orderItems.map(
+      (item: { productId?: unknown; quantity?: unknown }) => ({
+        productId: Number(item.productId),
+        quantity: Number(item.quantity),
+      })
+    )
+
+    if (requestedItems.some((item) => !Number.isInteger(item.productId) || item.productId <= 0 || !Number.isInteger(item.quantity) || item.quantity <= 0)) {
+      return errorResponse('productId et quantity doivent être des entiers positifs', 400)
     }
 
-    const taxAmount = body.taxAmount || totalAmount * 0.1 // 10% de TVA par défaut
-    const shippingAmount = body.shippingAmount || 10 // Frais de port fixes par défaut
-    const discountAmount = body.discountAmount || 0
+    // Récupérer les prix depuis la base — les prix envoyés par le client sont ignorés
+    const products = await prisma.product.findMany({
+      where: { id: { in: requestedItems.map((item) => item.productId) } },
+    })
+
+    if (products.length !== new Set(requestedItems.map((item) => item.productId)).size) {
+      return errorResponse('Un ou plusieurs produits n\'existent pas', 400)
+    }
+
+    const prices = new Map(products.map((product) => [product.id, product.price]))
+
+    let subtotal = 0
+    const orderItemsToCreate = requestedItems.map((item) => {
+      const price = prices.get(item.productId)!
+      subtotal += price * item.quantity
+      return {
+        productId: item.productId,
+        quantity: item.quantity,
+        price,
+        total: price * item.quantity,
+      }
+    })
+
+    const { shippingAmount, taxAmount, totalAmount } = computeOrderTotals(subtotal)
 
     const orderNumber = await generateOrderNumber()
 
-    const order = await prisma.order.create({
-      data: {
-        userId: user.userId,
-        orderNumber,
-        status: 'PENDING',
-        totalAmount:
-          totalAmount + taxAmount + shippingAmount - discountAmount,
-        taxAmount,
-        shippingAmount,
-        discountAmount,
-        notes: body.notes,
-        billingAddress: body.billingAddress ? JSON.stringify(body.billingAddress) : undefined,
-        shippingAddress: body.shippingAddress ? JSON.stringify(body.shippingAddress) : undefined,
-        orderItems: {
-          create: body.orderItems.map((item: any) => ({
-            productId: item.productId,
-            quantity: item.quantity,
-            price: item.price,
-            total: item.price * item.quantity,
-          })),
-        },
-      },
-      include: {
-        orderItems: {
-          include: {
-            product: true,
+    const order = await prisma.$transaction(async (tx) => {
+      // Décrémenter le stock (agrégat par produit), en refusant la vente si stock insuffisant
+      const qtyByProduct = new Map<number, number>()
+      for (const item of orderItemsToCreate) {
+        qtyByProduct.set(item.productId, (qtyByProduct.get(item.productId) ?? 0) + item.quantity)
+      }
+
+      for (const [productId, quantity] of qtyByProduct) {
+        const updated = await tx.product.updateMany({
+          where: { id: productId, stock: { gte: quantity } },
+          data: { stock: { decrement: quantity } },
+        })
+        if (updated.count === 0) {
+          throw insufficientStockError(productId)
+        }
+      }
+
+      const created = await tx.order.create({
+        data: {
+          userId: user.userId,
+          orderNumber,
+          status: 'PENDING',
+          totalAmount,
+          taxAmount,
+          shippingAmount,
+          discountAmount: 0,
+          notes: body.notes,
+          billingAddress: body.billingAddress ?? undefined,
+          shippingAddress: body.shippingAddress ?? undefined,
+          orderItems: {
+            create: orderItemsToCreate,
           },
         },
-      },
-    })
+        include: {
+          orderItems: {
+            include: {
+              product: true,
+            },
+          },
+        },
+      })
 
-    // Nettoyer le panier après la création de la commande
-    await prisma.cartItem.deleteMany({
-      where: { userId: user.userId },
+      // Nettoyer le panier après la création de la commande
+      await tx.cartItem.deleteMany({
+        where: { userId: user.userId },
+      })
+
+      return created
     })
 
     return successResponse(order, 201)
   } catch (error) {
+    if ((error as Error & { code?: string }).code === 'INSUFFICIENT_STOCK') {
+      return errorResponse((error as Error).message, 400)
+    }
     return errorResponse(error as Error)
   }
 }

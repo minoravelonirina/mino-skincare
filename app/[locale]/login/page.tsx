@@ -98,7 +98,11 @@ export default function LoginPage() {
         )}
 
         <div className="mt-6 space-y-4">
-          <button className="w-full text-center text-sm text-[#888] transition-colors hover:text-chocolate">
+          <button
+            type="button"
+            onClick={() => setMessage(content.login.forgotSoon.value)}
+            className="w-full text-center text-sm text-[#888] transition-colors hover:text-chocolate"
+          >
             {forgot}
           </button>
           <div className="flex items-center justify-center gap-2 border-t border-[#f0ede6] pt-5 text-sm">

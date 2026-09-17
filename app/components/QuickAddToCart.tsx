@@ -24,6 +24,7 @@ export default function QuickAddToCart({
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({
           productId,
           quantity: 1,
@@ -35,11 +36,13 @@ export default function QuickAddToCart({
         return
       }
 
-      if (!response.ok) return
+      if (!response.ok) throw new Error("add_failed")
 
       setAdded(true)
       window.dispatchEvent(new CustomEvent("cart-updated"))
       setTimeout(() => setAdded(false), 1500)
+    } catch {
+      setAdded(false)
     } finally {
       setLoading(false)
     }

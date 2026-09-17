@@ -114,7 +114,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <div className="rounded-3xl bg-white p-6 shadow-sm">
               <h2 className="text-lg font-semibold text-[#1a1a1a]">{content.detail.whyChoose}</h2>
               <ul className="mt-4 space-y-3 text-sm text-[#555]">
-                {content.detail.whyChooseItems.map((item: any, i: number) => (
+                {content.detail.whyChooseItems.map((item, i) => (
                   <li key={i}>• {item}</li>
                 ))}
               </ul>

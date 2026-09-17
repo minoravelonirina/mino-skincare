@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { categoryVisuals } from "@/lib/home";
+import type { CategoryWithCount } from "@/lib/home";
+import type { LocalizedContent } from "@/lib/types";
 import SectionHeader from "./SectionHeader";
 
-export default function CategoriesSection({ categories, content, locale }: { categories: any[]; content: any; locale: string }) {
+export default function CategoriesSection({ categories, content, locale }: { categories: CategoryWithCount[]; content: LocalizedContent; locale: string }) {
   const title = content.title ?? content.heading ?? "Shop by category";
   const description = content.description ?? content.subtitle ?? "";
   const productSingular = content.productSingular ?? "product";

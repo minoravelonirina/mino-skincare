@@ -4,7 +4,7 @@ import { useMemo, useState } from "react"
 import { useIntlayer } from "next-intlayer"
 import { CheckoutFormProps } from "../../lib/types"
 
-export default function CheckoutForm({ cartItems, totalAmount }: CheckoutFormProps) {
+export default function CheckoutForm({ cartItems }: CheckoutFormProps) {
   const content = useIntlayer("checkoutForm")
   const [formData, setFormData] = useState({
     fullName: "",
@@ -24,7 +24,6 @@ export default function CheckoutForm({ cartItems, totalAmount }: CheckoutFormPro
       cartItems.map((item) => ({
         productId: item.product.id,
         quantity: item.quantity,
-        price: item.product.price,
       })),
     [cartItems]
   )
@@ -45,6 +44,7 @@ export default function CheckoutForm({ cartItems, totalAmount }: CheckoutFormPro
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({
           orderItems,
           billingAddress: {
@@ -62,14 +62,12 @@ export default function CheckoutForm({ cartItems, totalAmount }: CheckoutFormPro
             postalCode: formData.postalCode,
             country: formData.country,
           },
-          taxAmount: Math.round(totalAmount * 0.1),
-          shippingAmount: 12000,
         }),
       })
 
       if (!response.ok) {
         const error = await response.json()
-        throw new Error(error.message || content.error.value)
+        throw new Error(error.error || content.error.value)
       }
 
       const result = await response.json()

@@ -7,6 +7,7 @@ import { getLocale } from 'next-intlayer/server'
 import { getCurrentUserFromCookies } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { formatPrice } from '@/lib/format'
+import { computeOrderTotals } from '@/lib/pricing'
 import StoreUnavailable from '@/app/components/StoreUnavailable'
 
 interface CheckoutCartItem {
@@ -49,9 +50,7 @@ export default async function CheckoutPage() {
   }))
 
   const subtotal = cartItems.reduce((sum, item) => sum + item.quantity * item.product.price, 0)
-  const shippingAmount = 12000
-  const taxAmount = Math.round(subtotal * 0.1)
-  const totalAmount = subtotal + shippingAmount + taxAmount
+  const { shippingAmount, taxAmount, totalAmount } = computeOrderTotals(subtotal)
 
   return (
     <main className="bg-[#FAFAF7] text-[#1a1a1a] antialiased">

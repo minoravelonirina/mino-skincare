@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server'
 import prisma from '@/lib/prisma'
 import { successResponse, errorResponse, notFoundResponse } from '@/app/api/utils/responses'
+import { parsePositiveInt } from '@/app/api/utils/validation'
 
 export async function GET(
   request: NextRequest,
@@ -8,7 +9,10 @@ export async function GET(
 ) {
   try {
     const { categoryId } = await params
-    const id = parseInt(categoryId)
+    const id = parsePositiveInt(categoryId)
+    if (!id) {
+      return errorResponse('id invalide', 400)
+    }
 
     const category = await prisma.category.findUnique({
       where: { id },
@@ -16,6 +20,7 @@ export async function GET(
         products: {
           where: { isActive: true },
           take: 10,
+          orderBy: { name: 'asc' },
         },
       },
     })

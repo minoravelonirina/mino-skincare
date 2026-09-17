@@ -10,14 +10,11 @@ export async function GET (request: NextRequest){
             return unauthorizedResponse();
 
         return successResponse({
-            message: 'Ceci est un donnee securise.',
             user,
-            data: {
-                secretInfo: 'Seul les utilisateurs authentifies qui ont acces a ceci.',
-                timestamp: new Date().toISOString(),
-            }
+            secretInfo: 'Seul les utilisateurs authentifies qui ont acces a ceci.',
+            timestamp: new Date().toISOString(),
         })
-    } catch (error: any) {
+    } catch {
         return internalServerResponse("Erreur serveur");
     }
 }

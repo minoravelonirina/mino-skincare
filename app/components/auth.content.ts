@@ -15,6 +15,10 @@ const authContent = {
       passwordPlaceholder: t({ en: "Enter your password", fr: "Entrez votre mot de passe" }),
       submit: t({ en: "Sign in", fr: "Se connecter" }),
       forgot: t({ en: "Forgot password?", fr: "Mot de passe oublié ?" }),
+      forgotSoon: t({
+        en: "Password recovery is coming soon.",
+        fr: "La récupération de mot de passe arrive bientôt.",
+      }),
       noAccount: t({ en: "Don't have an account?", fr: "Vous n'avez pas de compte ?" }),
       signup: t({ en: "Sign up", fr: "Créer un compte" }),
       success: t({ en: "Login successful!", fr: "Connexion réussie !" }),

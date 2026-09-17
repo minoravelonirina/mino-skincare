@@ -1,4 +1,7 @@
-export default function ReviewCard({ review, content }: { review: any; content: any }) {
+import type { ReviewWithRelations } from "@/lib/home";
+import type { LocalizedContent } from "@/lib/types";
+
+export default function ReviewCard({ review, content }: { review: ReviewWithRelations; content: LocalizedContent }) {
   const initials = `${review.user?.firstName?.charAt(0) ?? ""}${review.user?.lastName?.charAt(0) ?? ""}`;
 
   return (

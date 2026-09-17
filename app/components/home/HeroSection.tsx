@@ -1,14 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
+import { LocalizedContent, asString } from "@/lib/types";
 
-export default function HeroSection({ content, locale }: { content: any; locale: string }) {
+export default function HeroSection({ content, locale }: { content: LocalizedContent; locale: string }) {
   const eyebrow = content.eyebrow ?? "Mino Skincare";
   const titleStart = content.titleStart ?? content.title ?? "Skincare";
   const titleAccent = content.titleAccent ?? "";
   const description = content.description ?? content.subtitle ?? "";
   const catalogueCta = content.catalogueCta ?? content.cta ?? "Explore our collection";
   const showcaseCta = content.showcaseCta ?? "Discover more";
-  const imageAlt = content.imageAlt ?? "Mino Skincare product illustration";
+  const imageAlt = asString(content.imageAlt) ?? "Mino Skincare product illustration";
 
   return (
     <section className="relative overflow-hidden">

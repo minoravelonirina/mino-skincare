@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server'
 import prisma from '@/lib/prisma'
 import { successResponse, errorResponse, notFoundResponse, forbiddenResponse } from '@/app/api/utils/responses'
 import { requireAuth } from '@/lib/auth'
+import { parsePositiveInt } from '@/app/api/utils/validation'
 
 export async function PATCH(
   request: NextRequest,
@@ -14,7 +15,10 @@ export async function PATCH(
     }
 
     const { cartItemId } = await params
-    const id = parseInt(cartItemId)
+    const id = parsePositiveInt(cartItemId)
+    if (!id) {
+      return errorResponse('id invalide', 400)
+    }
     const body = await request.json()
 
     const cartItem = await prisma.cartItem.findUnique({
@@ -56,7 +60,10 @@ export async function DELETE(
     }
 
     const { cartItemId } = await params
-    const id = parseInt(cartItemId)
+    const id = parsePositiveInt(cartItemId)
+    if (!id) {
+      return errorResponse('id invalide', 400)
+    }
 
     const cartItem = await prisma.cartItem.findUnique({
       where: { id },

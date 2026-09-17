@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server'
 import prisma from '@/lib/prisma'
-import { successResponse, errorResponse, notFoundResponse } from '@/app/api/utils/responses'
+import type { Prisma } from '@/app/generated/prisma/client'
+import { successResponse, errorResponse } from '@/app/api/utils/responses'
 import { getProductFilters } from '@/app/api/utils/validation'
 import { requireAdmin } from '@/lib/auth'
 
@@ -10,7 +11,7 @@ export async function GET(request: NextRequest) {
     const skip = (filters.page - 1) * filters.limit
 
     // Construire les conditions de filtre
-    const where: any = {
+    const where: Prisma.ProductWhereInput = {
       isActive: true,
     }
 
@@ -52,7 +53,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Construire l'ordre de tri
-    let orderBy: any = { createdAt: 'desc' }
+    let orderBy: Prisma.ProductOrderByWithRelationInput = { createdAt: 'desc' }
     switch (filters.sort) {
       case 'price_asc':
         orderBy = { price: 'asc' }

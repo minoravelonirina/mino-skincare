@@ -8,9 +8,6 @@ const refreshSecretKey = process.env.JWT_REFRESH_SECRET!;
 const key = new TextEncoder().encode(secretKey);
 const refreshKey = new TextEncoder().encode(refreshSecretKey);
 
-// pourquoi mettre async dans la definition d'une fonction ?
-// Et pourquoi mettre promise, que veut dire promise ?
-
 // Generate Access token
 export async function generateAccessToken(payload: JWTPayload): Promise<string> {
     return await new SignJWT(payload)
@@ -33,7 +30,7 @@ export async function verifyAccessToken(token: string): Promise<JWTPayload | nul
     try {
         const verified = await jwtVerify(token, key);
         return verified.payload as JWTPayload;
-    } catch (error) {
+    } catch {
         return null;
     }
 }
@@ -42,7 +39,7 @@ export async function verifyRefreshToken(token: string): Promise<JWTPayload | nu
     try {
         const verified = await jwtVerify(token, refreshKey);
         return verified.payload as JWTPayload;
-    } catch (error) {
+    } catch {
         return null;
     }
 }
@@ -55,9 +52,9 @@ export function getTokenFromHeaders(request: NextRequest): string | null {
     return null;
 }
 
-export async function getCurrentUser (request: NextRequest): Promise<JWTPayload | null>{
+async function resolveUserFromCookies(): Promise<JWTPayload | null> {
     const cookieStore = await cookies();
-    const token = cookieStore.get('accessToken')?.value || getTokenFromHeaders (request);
+    const token = cookieStore.get('accessToken')?.value;
 
     if (token) {
         const user = await verifyAccessToken(token);
@@ -67,6 +64,15 @@ export async function getCurrentUser (request: NextRequest): Promise<JWTPayload 
     const refreshToken = cookieStore.get('refreshToken')?.value;
     if (!refreshToken) return null;
     return await verifyRefreshToken(refreshToken);
+}
+
+export async function getCurrentUser (request: NextRequest): Promise<JWTPayload | null>{
+    const headerToken = getTokenFromHeaders(request);
+    if (headerToken) {
+        const user = await verifyAccessToken(headerToken);
+        if (user) return user;
+    }
+    return resolveUserFromCookies();
 }
 
 export async function setAuthCookies(accessToken: string, refreshToken: string){
@@ -96,17 +102,7 @@ export async function clearAuthCookies() {
 }
 
 export async function getCurrentUserFromCookies(): Promise<JWTPayload | null> {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('accessToken')?.value;
-
-    if (token) {
-        const user = await verifyAccessToken(token);
-        if (user) return user;
-    }
-
-    const refreshToken = cookieStore.get('refreshToken')?.value;
-    if (!refreshToken) return null;
-    return await verifyRefreshToken(refreshToken);
+    return resolveUserFromCookies();
 }
 
 export async function requireAuth(request: NextRequest): Promise<JWTPayload | null> {
@@ -118,8 +114,3 @@ export async function requireAdmin(request: NextRequest): Promise<JWTPayload | n
     if (!user || user.role !== 'ADMIN') return null;
     return user;
 }
-
-
-
-
-

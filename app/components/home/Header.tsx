@@ -188,7 +188,7 @@ export default function Header({ content }: { content: Record<string, string> })
               className="group relative flex items-center gap-2 rounded-full bg-chocolate px-5 py-2.5 text-[13px] font-medium text-white transition-all duration-300 hover:bg-terracotta hover:shadow-lg hover:shadow-chocolate/20"
             >
               {cart}
-              <CartBadge />
+              <CartBadge authenticated={session?.authenticated === true} />
             </Link>
           </div>
 

@@ -1,9 +1,8 @@
 import { cookies } from "next/headers";
-import { NextRequest } from "next/server";
-import { errorResponse, internalServerResponse, successResponse, unauthorizedResponse } from "../../utils/responses";
+import { internalServerResponse, successResponse, unauthorizedResponse } from "../../utils/responses";
 import { generateAccessToken, generateRefreshToken, setAuthCookies, verifyRefreshToken } from "@/lib/auth";
 
-export async function POST(request: NextRequest) {
+export async function POST() {
     try {
         const cookieStore = await cookies();
         const refreshToken = cookieStore.get('refreshToken')?.value;
@@ -35,7 +34,7 @@ export async function POST(request: NextRequest) {
             accessToken: newAccessToken
         })
     }
-    catch (error: any) {
+    catch {
         return internalServerResponse('Rafraichissement du token echoue');
     }
 } 

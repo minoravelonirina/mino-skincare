@@ -1,8 +1,10 @@
 import Link from "next/link";
+import type { ProductWithRelations } from "@/lib/home";
+import type { LocalizedContent } from "@/lib/types";
 import SectionHeader from "./SectionHeader";
 import ProductCard from "./ProductCard";
 
-export default function FeaturedProductsSection({ products, content, locale }: { products: any[]; content: any; locale: string }) {
+export default function FeaturedProductsSection({ products, content, locale }: { products: ProductWithRelations[]; content: LocalizedContent; locale: string }) {
   const title = content.title ?? content.heading ?? "Featured products";
   const description = content.description ?? content.subtitle ?? "";
   const seeAll = content.seeAll ?? content.cta ?? "See all";

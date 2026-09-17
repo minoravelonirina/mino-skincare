@@ -36,6 +36,7 @@ const catalogueContent = {
       cta: t({ en: "See all products", fr: "Voir tous les produits" }),
     },
     newsletter: {
+      badge: t({ en: "Newsletter", fr: "Newsletter" }),
       title: t({ en: "Join our community", fr: "Rejoignez notre communauté" }),
       description: t({
         en: "Sign up to receive our exclusive offers, wellness tips and Mino Skincare news every week.",
@@ -43,6 +44,18 @@ const catalogueContent = {
       }),
       placeholder: t({ en: "Your email address...", fr: "Votre adresse email..." }),
       submit: t({ en: "Sign up", fr: "S'inscrire" }),
+      finePrint: t({
+        en: "No spam, unsubscribe at any time.",
+        fr: "Pas de spam, désabonnement à tout moment.",
+      }),
+      success: t({
+        en: "Thank you for subscribing!",
+        fr: "Merci pour votre inscription !",
+      }),
+      error: t({
+        en: "Please enter a valid email address.",
+        fr: "Veuillez entrer une adresse email valide.",
+      }),
     },
 
     detail: {

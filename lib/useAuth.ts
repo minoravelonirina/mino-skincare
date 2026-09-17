@@ -10,11 +10,7 @@ export function useAuth() {
   const [loading, setLoading] = useState(true);								
   const router = useRouter();		
   const locale = getLocaleFromPath()						
-								
-  useEffect(() => {								
-    checkAuth();								
-  }, []);								
-								
+
   const checkAuth = async () => {								
     try {								
       const response = await fetch('/api/protected');								
@@ -25,12 +21,17 @@ export function useAuth() {
       } else {								
         setUser(null);								
       }								
-    } catch (error) {								
+    } catch {								
       setUser(null);								
     } finally {								
       setLoading(false);								
     }								
   };								
+
+  useEffect(() => {								
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void checkAuth();								
+  }, []);								
 								
   const login = async (email: string, password: string) => {								
     const response = await fetch('/api/auth/login', {								
@@ -63,10 +64,10 @@ export function useAuth() {
 								
       const data = await response.json();								
       return data.success;								
-    } catch (error) {								
+    } catch {								
       return false;								
     }								
   };								
 								
   return { user, loading, login, logout, refreshToken };								
-}								
+}

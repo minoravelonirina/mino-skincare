@@ -2,6 +2,9 @@ import { NextRequest } from 'next/server'
 import prisma from '@/lib/prisma'
 import { successResponse, errorResponse, notFoundResponse, forbiddenResponse } from '@/app/api/utils/responses'
 import { requireAuth, requireAdmin } from '@/lib/auth'
+import { parsePositiveInt } from '@/app/api/utils/validation'
+
+const ORDER_STATUSES = ['PENDING', 'CONFIRMED', 'SHIPPED', 'DELIVERED', 'CANCELLED'] as const
 
 export async function GET(
   request: NextRequest,
@@ -14,35 +17,42 @@ export async function GET(
     }
 
     const { orderId } = await params
-    const id = parseInt(orderId)
-
-    const order = await prisma.order.findUnique({
-      where: { id },
-      include: {
-        orderItems: {
-          include: {
-            product: true,
-          },
-        },
-        payments: true,
-        shipments: true,
-        user: {
-          select: {
-            id: true,
-            email: true,
-            firstName: true,
-            lastName: true,
-          },
-        },
-      },
-    })
-
-    if (!order) {
-      return notFoundResponse('Commande')
+    const id = parsePositiveInt(orderId)
+    if (!id) {
+      return errorResponse('id invalide', 400)
     }
 
-    if (order.userId !== user.userId && user.role !== 'ADMIN') {
-      return forbiddenResponse()
+    const include = {
+      orderItems: {
+        include: {
+          product: true,
+        },
+      },
+      payments: true,
+      shipments: true,
+      user: {
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+    } as const
+
+    let order
+    if (user.role === 'ADMIN') {
+      order = await prisma.order.findUnique({ where: { id }, include })
+      if (!order) {
+        return notFoundResponse('Commande')
+      }
+    } else {
+      // Un client qui interroge une commande d'autrui reçoit 403 (existe ou non) :
+      // aucune fuite d'existence possible.
+      order = await prisma.order.findFirst({ where: { id, userId: user.userId }, include })
+      if (!order) {
+        return forbiddenResponse()
+      }
     }
 
     return successResponse(order)
@@ -62,7 +72,10 @@ export async function PATCH(
     }
 
     const { orderId } = await params
-    const id = parseInt(orderId)
+    const id = parsePositiveInt(orderId)
+    if (!id) {
+      return errorResponse('id invalide', 400)
+    }
     const body = await request.json()
 
     const order = await prisma.order.findUnique({
@@ -75,6 +88,10 @@ export async function PATCH(
 
     if (!body.status) {
       return errorResponse('status est requis', 400)
+    }
+
+    if (!ORDER_STATUSES.includes(body.status)) {
+      return errorResponse('status invalide', 400)
     }
 
     const updatedOrder = await prisma.order.update({

@@ -8,8 +8,8 @@ export default function SectionHeader({
   children,
 }: {
   eyebrow?: string;
-  title: any;
-  description?: string;
+  title: ReactNode;
+  description?: ReactNode;
   align?: "center" | "left";
   children?: ReactNode;
 }) {

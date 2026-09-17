@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server'
 import prisma from '@/lib/prisma'
 import { successResponse, errorResponse, notFoundResponse } from '@/app/api/utils/responses'
 import { requireAdmin } from '@/lib/auth'
+import { parsePositiveInt } from '@/app/api/utils/validation'
 
 export async function GET(
   request: NextRequest,
@@ -9,7 +10,10 @@ export async function GET(
 ) {
   try {
     const { productId } = await params
-    const id = parseInt(productId)
+    const id = parsePositiveInt(productId)
+    if (!id) {
+      return errorResponse('id invalide', 400)
+    }
 
     const product = await prisma.product.findUnique({
       where: { id },
@@ -51,7 +55,10 @@ export async function PATCH(
     }
 
     const { productId } = await params
-    const id = parseInt(productId)
+    const id = parsePositiveInt(productId)
+    if (!id) {
+      return errorResponse('id invalide', 400)
+    }
     const body = await request.json()
 
     // Vérifier que le produit existe
@@ -120,7 +127,10 @@ export async function DELETE(
     }
 
     const { productId } = await params
-    const id = parseInt(productId)
+    const id = parsePositiveInt(productId)
+    if (!id) {
+      return errorResponse('id invalide', 400)
+    }
 
     // Vérifier que le produit existe
     const product = await prisma.product.findUnique({
@@ -130,11 +140,6 @@ export async function DELETE(
     if (!product) {
       return notFoundResponse('Produit')
     }
-
-    // Supprimer les références aux items du panier
-    await prisma.cartItem.deleteMany({
-      where: { productId: id },
-    })
 
     // Supprimer le produit
     await prisma.product.delete({

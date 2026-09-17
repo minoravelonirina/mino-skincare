@@ -25,6 +25,10 @@ function stripLocale(pathname: string) {
   return pathname;
 }
 
+function resolveLocale(first: string | undefined): string {
+  return first && LOCALES.includes(first) ? first : DEFAULT_LOCALE;
+}
+
 function authCookieOptions(maxAge: number) {
   return {
     httpOnly: true,
@@ -87,7 +91,7 @@ export async function proxy(request: NextRequest) {
       const refreshed = await refreshSessionIfPossible(request);
 
       if (!refreshed) {
-        const loginUrl = '/' + [first ?? DEFAULT_LOCALE, 'login'].join('/');
+        const loginUrl = '/' + [resolveLocale(first), 'login'].join('/');
         const response = NextResponse.redirect(new URL(loginUrl, request.url));
         response.cookies.delete('accessToken');
         response.cookies.delete('refreshToken');
@@ -107,7 +111,7 @@ export async function proxy(request: NextRequest) {
     if (!user) {
       const refreshed = await refreshSessionIfPossible(request);
       if (refreshed) {
-        const dashUrl = '/' + [first ?? DEFAULT_LOCALE, 'dashboard'].join('/');
+        const dashUrl = '/' + [resolveLocale(first), 'dashboard'].join('/');
         const response = NextResponse.redirect(new URL(dashUrl, request.url));
         response.cookies.set('accessToken', refreshed.accessToken, authCookieOptions(ACCESS_TOKEN_MAX_AGE));
         response.cookies.set('refreshToken', refreshed.refreshToken, authCookieOptions(REFRESH_TOKEN_MAX_AGE));
@@ -116,7 +120,7 @@ export async function proxy(request: NextRequest) {
     }
 
     if (user) {
-      const dashUrl = '/' + [first ?? DEFAULT_LOCALE, 'dashboard'].join('/');
+      const dashUrl = '/' + [resolveLocale(first), 'dashboard'].join('/');
       return NextResponse.redirect(new URL(dashUrl, request.url));
     }
   }

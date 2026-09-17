@@ -1,23 +1,44 @@
 import fs from "node:fs";
 import path from "node:path";
 import prisma from "@/lib/prisma";
+import type { Prisma } from "@/app/generated/prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import { getIntlayer } from "next-intlayer";
 import { getLocale } from "next-intlayer/server";
-import { CataloguePageProps, Product, Category} from "@/lib/types"
+import { CataloguePageProps, Product } from "@/lib/types"
 import { getProductImage, placeholderProductImage, formatPrice } from "@/lib/home";
 import NewsletterSection from "@/app/components/home/NewsletterSection";
+import CatalogSortSelect from "@/app/components/CatalogSortSelect";
 import QuickAddToCart from "@/app/components/QuickAddToCart";
 import StoreUnavailable from "@/app/components/StoreUnavailable";
+
+const SORTS = ["relevance", "price_asc", "price_desc", "newest", "popular"] as const;
+type SortValue = (typeof SORTS)[number];
+type CatalogueProduct = Prisma.ProductGetPayload<{ include: { category: true; brand: true } }>;
+
+function sortOrder(sort: SortValue): Prisma.ProductOrderByWithRelationInput[] {
+  switch (sort) {
+    case "price_asc":
+      return [{ price: 'asc' }];
+    case "price_desc":
+      return [{ price: 'desc' }];
+    case "newest":
+      return [{ createdAt: 'desc' }];
+    case "popular":
+    case "relevance":
+    default:
+      return [{ isFeatured: 'desc' }, { createdAt: 'desc' }];
+  }
+}
 
 function pathExists(src: string): boolean {
   const filePath = path.join(process.cwd(), "public", src);
   return fs.existsSync(filePath);
 }
 
-async function getProducts(search?: string, category?: string) {
-  const where: any = {
+async function getProducts(search?: string, category?: string, sort?: string): Promise<CatalogueProduct[]> {
+  const where: Prisma.ProductWhereInput = {
     isActive: true,
   };
 
@@ -39,10 +60,7 @@ async function getProducts(search?: string, category?: string) {
       category: true,
       brand: true,
     },
-    orderBy: [
-      { isFeatured: 'desc' },
-      { createdAt: 'desc' },
-    ],
+    orderBy: sortOrder((SORTS.includes(sort as SortValue) ? sort : 'relevance') as SortValue),
   });
 
   return products;
@@ -71,7 +89,7 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
 
   try {
     [products, categories] = await Promise.all([
-      getProducts(params.search, params.category),
+      getProducts(params.search, params.category, params.sort),
       getCategories(),
     ]);
   } catch (err) {
@@ -140,7 +158,7 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
               >
                 {content.all} ({products.length})
               </Link>
-              {categories.map((category:any) => (
+              {categories.map((category) => (
                 <Link
                   key={category.id}
                   href={`/${locale}/catalogue?category=${category.slug}`}
@@ -178,17 +196,22 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
               <p className="text-sm text-[#555]">
                 {products.length} {content.productCount}
               </p>
-              <select className="rounded-xl border border-[#e8e4dc] bg-white px-4 py-2 text-sm outline-none focus:border-chocolate">
-                <option>{content.sortBy.label}</option>
-                <option>{content.sortBy.priceAsc}</option>
-                <option>{content.sortBy.priceDesc}</option>
-                <option>{content.sortBy.newest}</option>
-                <option>{content.sortBy.popular}</option>
-              </select>
+              <CatalogSortSelect
+                value={params.sort ?? "relevance"}
+                search={params.search}
+                category={params.category}
+                labels={{
+                  default: content.sortBy.label,
+                  priceAsc: content.sortBy.priceAsc,
+                  priceDesc: content.sortBy.priceDesc,
+                  newest: content.sortBy.newest,
+                  popular: content.sortBy.popular,
+                }}
+              />
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {products.map((product: any) => (
+              {products.map((product) => (
                 <article
                   key={product.id}
                   className="group overflow-hidden rounded-3xl border border-[#e8e4dc] bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md"

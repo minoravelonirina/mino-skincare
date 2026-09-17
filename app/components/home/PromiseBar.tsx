@@ -1,4 +1,6 @@
-export default function PromiseBar({ content }: { content: any }) {
+import type { LocalizedContent } from "@/lib/types";
+
+export default function PromiseBar({ content }: { content: LocalizedContent }) {
   const promiseItems = Array.isArray(content.items)
     ? content.items
     : [
@@ -32,7 +34,7 @@ export default function PromiseBar({ content }: { content: any }) {
     <section className="relative border-y border-[#e0ddd5] bg-white">
       <div className="mx-auto max-w-7xl px-5 py-6 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          {promiseItems.map((promise: any, index: number) => (
+          {promiseItems.map((promise, index) => (
             <div
               key={index}
               className="group flex items-center gap-3 rounded-2xl px-4 py-3 transition-colors duration-300 hover:bg-[#f8f6f3]"

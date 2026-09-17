@@ -49,7 +49,7 @@ export const getProductFilters = (request: NextRequest): ProductFilters => {
       : undefined,
     featured: url.searchParams.get('featured') === 'true',
     onSale: url.searchParams.get('onSale') === 'true',
-    sort: (url.searchParams.get('sort') as any) || undefined,
+    sort: (url.searchParams.get('sort') as ProductFilters['sort']) || undefined,
   }
 }
 
@@ -62,8 +62,15 @@ export const validatePassword = (password: string): boolean => {
   return password.length >= 6
 }
 
-export const validateRequired = (value: any, fieldName: string): void => {
+export const validateRequired = (value: unknown, fieldName: string): void => {
   if (!value || (typeof value === 'string' && !value.trim())) {
     throw new ApiError(400, `${fieldName} est requis`)
   }
+}
+
+export const parsePositiveInt = (value: string | undefined | null): number | null => {
+  if (!value) return null
+  const parsed = Number(value)
+  if (!Number.isInteger(parsed) || parsed <= 0) return null
+  return parsed
 }

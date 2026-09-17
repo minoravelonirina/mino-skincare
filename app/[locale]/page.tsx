@@ -6,6 +6,9 @@ import {
   getFeaturedProducts,
   getOtherProducts,
   getReviews,
+  type CategoryWithCount,
+  type ProductWithRelations,
+  type ReviewWithRelations,
 } from "@/lib/home";
 
 import HeroSection from "../components/home/HeroSection";
@@ -20,10 +23,10 @@ import StoreUnavailable from "../components/StoreUnavailable";
 export default async function Home() {
   const locale = await getLocale();
   const content = getIntlayer("page", locale);
-  let categories = [] as any[];
-  let featuredProducts = [] as any[];
-  let otherProducts = [] as any[];
-  let reviews = [] as any[];
+  let categories: CategoryWithCount[] = [];
+  let featuredProducts: ProductWithRelations[] = [];
+  let otherProducts: ProductWithRelations[] = [];
+  let reviews: ReviewWithRelations[] = [];
 
   try {
     [categories, featuredProducts, otherProducts, reviews] = await Promise.all([

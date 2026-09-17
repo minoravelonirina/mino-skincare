@@ -1,7 +1,9 @@
 import SectionHeader from "./SectionHeader";
 import ReviewCard from "./ReviewCard";
+import type { ReviewWithRelations } from "@/lib/home";
+import type { LocalizedContent } from "@/lib/types";
 
-export default function TestimonialsSection({ reviews, content }: { reviews: any[]; content: any }) {
+export default function TestimonialsSection({ reviews, content }: { reviews: ReviewWithRelations[]; content: LocalizedContent }) {
   if (!reviews.length) return null;
 
   const title = content.title ?? content.heading ?? "What our clients say";

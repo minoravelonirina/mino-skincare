@@ -86,6 +86,7 @@ const pageContent = {
     },
 
     newsletter: {
+      badge: t({ en: "Newsletter", fr: "Newsletter" }),
       title: t({ en: "Stay connected", fr: "Restez connectées" }),
       heading: t({ en: "Stay connected", fr: "Restez connectées" }),
       description: t({
@@ -95,6 +96,18 @@ const pageContent = {
       placeholder: t({ en: "Enter your email", fr: "Entrez votre adresse email" }),
       submit: t({ en: "Subscribe", fr: "S'abonner" }),
       cta: t({ en: "Subscribe", fr: "S'abonner" }),
+      finePrint: t({
+        en: "No spam, unsubscribe at any time.",
+        fr: "Pas de spam, désabonnement à tout moment.",
+      }),
+      success: t({
+        en: "Thank you for subscribing!",
+        fr: "Merci pour votre inscription !",
+      }),
+      error: t({
+        en: "Please enter a valid email address.",
+        fr: "Veuillez entrer une adresse email valide.",
+      }),
     },
   },
 } satisfies Dictionary;

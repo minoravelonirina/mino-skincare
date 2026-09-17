@@ -1,7 +1,21 @@
 import Link from "next/link";
 import Image from "next/image";
+import type { ReactNode } from "react";
 import { getCategoryVisual, formatPrice, getProductImage, placeholderProductImage } from "@/lib/home";
-export default async function ProductCard({ product, locale, saleBadge, showCompareAtPrice = false, variant = "default", viewDetails, inStock, outOfStock }: any) {
+import type { ProductWithRelations } from "@/lib/home";
+
+interface ProductCardProps {
+  product: ProductWithRelations;
+  locale: string;
+  saleBadge?: ReactNode;
+  showCompareAtPrice?: boolean;
+  variant?: "default" | "compact";
+  viewDetails?: ReactNode;
+  inStock?: ReactNode;
+  outOfStock?: ReactNode;
+}
+
+export default async function ProductCard({ product, locale, saleBadge, showCompareAtPrice = false, variant = "default", viewDetails, inStock, outOfStock }: ProductCardProps) {
   const visual = getCategoryVisual(product.category?.name);
   const isCompact = variant === "compact";
 

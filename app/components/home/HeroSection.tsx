@@ -94,7 +94,7 @@ export default function HeroSection({ content, locale }: { content: LocalizedCon
             <div className="relative">
               <div className="absolute -inset-4 rounded-full bg-gradient-to-br from-cream/50 to-transparent" />
               <Image
-                src="/woman.png"
+                src="/woman.webp"
                 alt={imageAlt}
                 width={800}
                 height={600}
